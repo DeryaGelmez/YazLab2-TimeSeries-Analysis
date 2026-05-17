@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 
-base_path = Path(r"D:\Users\51001564\OneDrive - ARÇELİK A.Ş\Desktop\Dataset\SKAB")
+base_path = Path("data/raw/SKAB")
 file_path = base_path / "skab_combined.csv"
 
 
@@ -99,7 +99,6 @@ for fold, (train_idx, test_idx) in enumerate(gkf.split(X, y, groups)):
     print("Train dosya sayısı:", train_groups.nunique())
     print("Test dosya sayısı:", test_groups.nunique())
 
-    # Leakage kontrolü
     common_files = set(train_groups.unique()).intersection(
         set(test_groups.unique())
     )
@@ -136,3 +135,34 @@ for fold, (train_idx, test_idx) in enumerate(gkf.split(X, y, groups)):
     )
 
     break
+
+
+processed_path = Path("data/processed/SKAB")
+processed_path.mkdir(parents=True, exist_ok=True)
+
+X_train_scaled_df = pd.DataFrame(X_train_scaled, columns=feature_columns)
+X_test_scaled_df = pd.DataFrame(X_test_scaled, columns=feature_columns)
+
+X_train_scaled_df["anomaly"] = y_train.values
+X_test_scaled_df["anomaly"] = y_test.values
+
+X_train_scaled_df["source_file"] = train_groups.values
+X_test_scaled_df["source_file"] = test_groups.values
+
+X_train_pc1_df = pd.DataFrame(X_train_pc1, columns=["PC1"])
+X_test_pc1_df = pd.DataFrame(X_test_pc1, columns=["PC1"])
+
+X_train_pc1_df["anomaly"] = y_train.values
+X_test_pc1_df["anomaly"] = y_test.values
+
+X_train_pc1_df["source_file"] = train_groups.values
+X_test_pc1_df["source_file"] = test_groups.values
+
+X_train_scaled_df.to_csv(processed_path / "skab_train_scaled.csv", index=False)
+X_test_scaled_df.to_csv(processed_path / "skab_test_scaled.csv", index=False)
+
+X_train_pc1_df.to_csv(processed_path / "skab_train_pc1.csv", index=False)
+X_test_pc1_df.to_csv(processed_path / "skab_test_pc1.csv", index=False)
+
+print("\nSKAB preprocessing çıktıları kaydedildi:")
+print(processed_path)

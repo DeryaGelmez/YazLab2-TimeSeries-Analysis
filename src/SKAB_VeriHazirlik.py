@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
 
-base_path = Path(r"D:\Users\51001564\OneDrive - ARÇELİK A.Ş\Desktop\Dataset\SKAB")
+base_path = Path("data/raw/SKAB")
 
 groups = ["valve1", "valve2"]
 

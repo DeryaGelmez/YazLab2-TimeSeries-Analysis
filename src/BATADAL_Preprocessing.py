@@ -5,17 +5,11 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 
-# =========================
-# 1. Dosya yolunu tanımla
-# =========================
 
-base_path = Path(r"D:\Users\51001564\OneDrive - ARÇELİK A.Ş\Desktop\Dataset\BATADAL")
+base_path = Path("data/raw/BATADAL")
 file_path = base_path / "batadal_prepared.csv"
 
 
-# =========================
-# 2. Veriyi oku
-# =========================
 
 batadal_df = pd.read_csv(file_path)
 
@@ -26,9 +20,6 @@ print("Toplam satır:", batadal_df.shape[0])
 print("Toplam sütun:", batadal_df.shape[1])
 
 
-# =========================
-# 3. Feature / target ayrımı
-# =========================
 
 target_column = "anomaly"
 
@@ -48,9 +39,6 @@ y = batadal_df[target_column]
 datetime_col = batadal_df["DATETIME"]
 
 
-# =========================
-# 4. Sayısal dönüşüm
-# =========================
 
 X = X.apply(pd.to_numeric, errors="coerce")
 
@@ -68,10 +56,6 @@ print("\nTarget dağılımı:")
 print(y.value_counts())
 
 
-# =========================
-# 5. Zaman sıralı split
-# %60 train, %20 validation, %20 test
-# =========================
 
 total_len = len(batadal_df)
 
@@ -115,10 +99,6 @@ print("\nTest tarih aralığı:")
 print(datetime_test.iloc[0], "→", datetime_test.iloc[-1])
 
 
-# =========================
-# 6. Normalization
-# Sadece train üzerinde fit edilir
-# =========================
 
 scaler = StandardScaler()
 
@@ -133,10 +113,6 @@ print("X_val_scaled shape:", X_val_scaled.shape)
 print("X_test_scaled shape:", X_test_scaled.shape)
 
 
-# =========================
-# 7. PCA - Automata için PC1
-# Sadece train üzerinde fit edilir
-# =========================
 
 pca = PCA(n_components=1)
 
@@ -151,3 +127,42 @@ print("X_val_pc1 shape:", X_val_pc1.shape)
 print("X_test_pc1 shape:", X_test_pc1.shape)
 
 print("PC1 explained variance ratio:", pca.explained_variance_ratio_[0])
+
+
+processed_path = Path("data/processed/BATADAL")
+processed_path.mkdir(parents=True, exist_ok=True)
+
+X_train_scaled_df = pd.DataFrame(X_train_scaled, columns=feature_columns)
+X_val_scaled_df = pd.DataFrame(X_val_scaled, columns=feature_columns)
+X_test_scaled_df = pd.DataFrame(X_test_scaled, columns=feature_columns)
+
+X_train_scaled_df["anomaly"] = y_train.values
+X_val_scaled_df["anomaly"] = y_val.values
+X_test_scaled_df["anomaly"] = y_test.values
+
+X_train_scaled_df["DATETIME"] = datetime_train.values
+X_val_scaled_df["DATETIME"] = datetime_val.values
+X_test_scaled_df["DATETIME"] = datetime_test.values
+
+X_train_pc1_df = pd.DataFrame(X_train_pc1, columns=["PC1"])
+X_val_pc1_df = pd.DataFrame(X_val_pc1, columns=["PC1"])
+X_test_pc1_df = pd.DataFrame(X_test_pc1, columns=["PC1"])
+
+X_train_pc1_df["anomaly"] = y_train.values
+X_val_pc1_df["anomaly"] = y_val.values
+X_test_pc1_df["anomaly"] = y_test.values
+
+X_train_pc1_df["DATETIME"] = datetime_train.values
+X_val_pc1_df["DATETIME"] = datetime_val.values
+X_test_pc1_df["DATETIME"] = datetime_test.values
+
+X_train_scaled_df.to_csv(processed_path / "batadal_train_scaled.csv", index=False)
+X_val_scaled_df.to_csv(processed_path / "batadal_val_scaled.csv", index=False)
+X_test_scaled_df.to_csv(processed_path / "batadal_test_scaled.csv", index=False)
+
+X_train_pc1_df.to_csv(processed_path / "batadal_train_pc1.csv", index=False)
+X_val_pc1_df.to_csv(processed_path / "batadal_val_pc1.csv", index=False)
+X_test_pc1_df.to_csv(processed_path / "batadal_test_pc1.csv", index=False)
+
+print("\nBATADAL preprocessing çıktıları kaydedildi:")
+print(processed_path)
