@@ -12,11 +12,13 @@ kullanılarak anomali tespiti gerçekleştirilmektedir.
 # Kullanılan Veri Setleri
 
 ## SKAB
+
 - Endüstriyel sensör verileri içeren anomali tespit veri seti
 - source_file bazlı Group Split uygulanmıştır
 - Veri sızıntısını önlemek amacıyla aynı dosya hem train hem test kümesinde kullanılmamıştır
 
 ## BATADAL
+
 - Su dağıtım sistemi saldırı tespit veri seti
 - Zaman sıralı train/validation/test ayrımı uygulanmıştır
 
@@ -62,7 +64,7 @@ Veri ön işleme aşamasında aşağıdaki işlemler uygulanmıştır:
 - Normalizasyon
 - PCA boyut indirgeme
 - PC1 çıkarımı
-- Veri sızıntısı önleme (Data Leakage Prevention)
+- Veri sızıntısı önleme
 - Train/Test ayrımı
 
 ## SKAB Veri Seti
@@ -73,11 +75,7 @@ Veri ön işleme aşamasında aşağıdaki işlemler uygulanmıştır:
 ## BATADAL Veri Seti
 
 - Zaman sırası korunmuştur
-- Veri:
-  - %60 Train
-  - %20 Validation
-  - %20 Test
-  olarak ayrılmıştır
+- Veri %60 Train, %20 Validation ve %20 Test olarak ayrılmıştır
 
 ---
 
@@ -85,8 +83,8 @@ Veri ön işleme aşamasında aşağıdaki işlemler uygulanmıştır:
 
 Projede geliştirilen automata tabanlı model aşağıdaki adımlardan oluşmaktadır:
 
-1. PAA (Piecewise Aggregate Approximation)
-2. SAX (Symbolic Aggregate approXimation)
+1. PAA
+2. SAX
 3. Sliding Window ile pattern çıkarımı
 4. State oluşturma
 5. Transition Probability hesaplama
@@ -124,8 +122,6 @@ Model her karar için aşağıdaki bilgileri üretmektedir:
 
 ---
 
-````markdown
-
 # Oluşturulan Görseller
 
 Proje kapsamında otomatik olarak aşağıdaki görseller oluşturulmaktadır:
@@ -145,6 +141,7 @@ Proje kapsamında otomatik olarak aşağıdaki görseller oluşturulmaktadır:
 results/figures/
 results/logs/
 results/metrics/
+```
 
 ---
 
@@ -164,9 +161,6 @@ Analizlerde aşağıdaki değerler incelenmiştir:
 - state sayısı
 - transition density
 
----
-
-````markdown
 Analiz sonuçları göstermiştir ki:
 
 - alphabet size arttıkça state sayısı artmaktadır
@@ -176,9 +170,7 @@ Analiz sonuçları göstermiştir ki:
 
 Bu durum anomaly detection problemlerindeki klasik trade-off yapısını göstermektedir.
 
-En iyi sonuçlar:
-
-## SKAB
+## SKAB En İyi Sonuç
 
 ```text
 window_size = 6
@@ -188,7 +180,7 @@ F1-score = 0.394
 Recall = 0.759
 ```
 
-## BATADAL
+## BATADAL En İyi Sonuç
 
 ```text
 window_size = 4
@@ -197,6 +189,8 @@ alphabet_size = 6
 F1-score = 0.090
 Recall = 0.714
 ```
+
+---
 
 # Kullanılan Değerlendirme Metrikleri
 
@@ -298,3 +292,13 @@ Devam eden çalışmalar:
 - 1D-CNN
 - Final model comparison
 - Final rapor yazımı
+
+---
+
+# Geliştiriciler
+
+- Derya Gelmez
+- Melih İyigören
+
+Kocaeli Üniversitesi  
+YazLab-II Projesi
