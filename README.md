@@ -124,6 +124,8 @@ Model her karar için aşağıdaki bilgileri üretmektedir:
 
 ---
 
+````markdown
+
 # Oluşturulan Görseller
 
 Proje kapsamında otomatik olarak aşağıdaki görseller oluşturulmaktadır:
@@ -131,6 +133,11 @@ Proje kapsamında otomatik olarak aşağıdaki görseller oluşturulmaktadır:
 - Confusion Matrix
 - Transition Probability Heatmap
 - Automata State Diagram
+- Parameter Sensitivity Graphs
+- F1-score vs Alphabet Size
+- Recall vs Alphabet Size
+- State Count vs Alphabet Size
+- Transition Density vs Alphabet Size
 
 Çıktılar aşağıdaki klasörlerde saklanmaktadır:
 
@@ -138,7 +145,6 @@ Proje kapsamında otomatik olarak aşağıdaki görseller oluşturulmaktadır:
 results/figures/
 results/logs/
 results/metrics/
-```
 
 ---
 
@@ -159,6 +165,38 @@ Analizlerde aşağıdaki değerler incelenmiştir:
 - transition density
 
 ---
+
+````markdown
+Analiz sonuçları göstermiştir ki:
+
+- alphabet size arttıkça state sayısı artmaktadır
+- transition density azalmaktadır
+- model daha agresif anomaly detection davranışı göstermektedir
+- recall artarken false positive oranı da artmaktadır
+
+Bu durum anomaly detection problemlerindeki klasik trade-off yapısını göstermektedir.
+
+En iyi sonuçlar:
+
+## SKAB
+
+```text
+window_size = 6
+alphabet_size = 6
+
+F1-score = 0.394
+Recall = 0.759
+```
+
+## BATADAL
+
+```text
+window_size = 4
+alphabet_size = 6
+
+F1-score = 0.090
+Recall = 0.714
+```
 
 # Kullanılan Değerlendirme Metrikleri
 
@@ -189,22 +227,74 @@ Projede aşağıdaki modeller uygulanacaktır:
 
 Model eğitimleri Google Colab ortamında GPU kullanılarak gerçekleştirilecektir.
 
+Derin öğrenme modelleri ile automata modeli final aşamada karşılaştırılacaktır.
+
+Karşılaştırmalarda aşağıdaki metrikler kullanılacaktır:
+
+- Accuracy
+- Precision
+- Recall
+- F1-score
+- Explainability
+- Noise Robustness
+- Unseen Pattern Robustness
+
 ---
 
 # Deneysel Senaryolar
 
-Deneyler aşağıdaki senaryolar altında gerçekleştirilecektir:
+Deneyler aşağıdaki senaryolar altında gerçekleştirilmiştir:
 
 - Orijinal veri
 - Gaussian Noise eklenmiş veri
-- Unseen pattern verisi
+- Controlled Unseen Pattern verisi
+
+## Gaussian Noise Deneyi
+
+Modelin gürültülü veriler altındaki dayanıklılığı ölçülmüştür.
+
+Bu deneyde test verisine düşük seviyeli Gaussian Noise eklenmiş ve model performansı tekrar değerlendirilmiştir.
+
+Sonuçlar modelin düşük seviyeli gürültü altında görece stabil kaldığını göstermiştir.
+
+## Controlled Unseen Experiment
+
+Modelin eğitim sırasında görülmeyen pattern’lar karşısındaki davranışı analiz edilmiştir.
+
+Bu deneyde kontrollü şekilde unseen pattern’lar oluşturulmuş ve Levenshtein Distance algoritması ile en yakın pattern eşleştirmesi gerçekleştirilmiştir.
+
+Örnek mapping:
+
+```text
+ccdcbb → ccdcbe
+distance = 1
+```
+
+Bu yapı sayesinde model unseen pattern’lar altında çalışmaya devam edebilmiştir.
 
 ---
 
-# Geliştiriciler
+# Mevcut Durum
 
-- Derya Gelmez
-- Melih İyigören
+Tamamlanan çalışmalar:
 
-Kocaeli Üniversitesi  
-YazLab-II Projesi
+- SKAB preprocessing
+- BATADAL preprocessing
+- Probabilistic Automata pipeline
+- Explainability sistemi
+- Transition analysis
+- Heatmap üretimi
+- State diagram üretimi
+- Parameter sensitivity analysis
+- Gaussian noise experiments
+- Controlled unseen experiments
+- Summary metric tabloları
+
+Devam eden çalışmalar:
+
+- Deep Learning modelleri
+- LSTM
+- GRU
+- 1D-CNN
+- Final model comparison
+- Final rapor yazımı
