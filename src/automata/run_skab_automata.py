@@ -24,7 +24,8 @@ from src.utils.metrics import calculate_classification_metrics
 from src.utils.logger import log_experiment_result
 from src.utils.plotting import (
     plot_confusion_matrix,
-    plot_transition_heatmap
+    plot_transition_heatmap,
+    plot_state_diagram
 )
 
 
@@ -156,6 +157,15 @@ def main():
     )
 
     print("\nTransition probability heatmap kaydedildi.")
+
+    plot_state_diagram(
+        transition_probabilities=transition_probabilities,
+        save_path=FIGURES_DIR / "skab_automata_state_diagram.png",
+        threshold=0.3,
+        title="SKAB Automata State Diagram"
+    )
+
+    print("\nState diagram kaydedildi.")
 
     print("Train pattern sayısı:", len(train_patterns))
     print("Test pattern sayısı:", len(test_patterns))
