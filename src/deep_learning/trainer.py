@@ -143,7 +143,7 @@ def fit(
         "val_acc": [],
     }
 
-    for _ in range(max_epochs):
+    for epoch in range(max_epochs):
         train_metrics = train_one_epoch(model, train_loader, criterion, optimizer, device)
         val_metrics = evaluate(model, val_loader, criterion, device)
 
@@ -152,8 +152,15 @@ def fit(
         history["train_acc"].append(train_metrics["acc"])
         history["val_acc"].append(val_metrics["acc"])
 
+        print(
+            f"Epoch {epoch + 1}/{max_epochs} | "
+            f"train_loss={train_metrics['loss']:.4f}, val_loss={val_metrics['loss']:.4f}, "
+            f"train_acc={train_metrics['acc']:.4f}, val_acc={val_metrics['acc']:.4f}"
+        )
+
         early_stopping(val_metrics["loss"], model)
         if early_stopping.should_stop:
+            print(f"Early stopping triggered at epoch {epoch + 1}.")
             break
 
     best_state_dict = early_stopping.best_state_dict
