@@ -41,12 +41,30 @@ YazLab2/
 │   ├── preprocessing/
 │   ├── automata/
 │   ├── deep_learning/
+│   │   ├── data_loader.py
+│   │   ├── trainer.py
+│   │   ├── evaluator.py
+│   │   ├── scenarios.py
+│   │   ├── experiment_runner.py
+│   │   ├── results_aggregator.py
+│   │   └── models/
 │   └── utils/
+│
+├── scripts/
+│   └── run_deep_learning.py
+│
+├── outputs/
+│   ├── figures/
+│   ├── metrics/
+│   ├── models/
+│   └── logs/
 │
 ├── results/
 │   ├── figures/
 │   ├── logs/
 │   └── metrics/
+│
+├── requirements.txt
 │
 ├── reports/
 │   └── Process.docx
@@ -213,41 +231,123 @@ analizleri gerçekleştirilmektedir.
 
 # Derin Öğrenme Modelleri
 
-Projede aşağıdaki modeller uygulanacaktır:
+Projede aşağıdaki PyTorch tabanlı modeller uygulanmıştır:
 
-- 1D-CNN
 - LSTM
 - GRU
+- 1D-CNN
 
-Model eğitimleri Google Colab ortamında GPU kullanılarak gerçekleştirilecektir.
+Modeller çok değişkenli (multivariate) scaled veri üzerinde sliding-window ile sequence oluşturarak eğitilir. Derin öğrenme modelleri ile automata modeli final aşamada karşılaştırılacaktır.
 
-Derin öğrenme modelleri ile automata modeli final aşamada karşılaştırılacaktır.
-
-Karşılaştırmalarda aşağıdaki metrikler kullanılacaktır:
+Karşılaştırmalarda aşağıdaki metrikler kullanılmaktadır:
 
 - Accuracy
 - Precision
 - Recall
 - F1-score
-- Explainability
+- ROC-AUC / PR-AUC
 - Noise Robustness
 - Unseen Pattern Robustness
 
-## Derin Öğrenme Pipeline
+> **Not:** Kök dizinde `models/lstm.py`, `models/gru.py`, `models/cnn1d.py` dosyaları varsa bunlar **deprecated** olup kullanılmamaktadır. Aktif model implementasyonları `src/deep_learning/models/` altındadır.
 
-Bağımlılıkları kurduktan sonra proje kök dizininden aşağıdaki komutlarla deneyleri çalıştırabilirsiniz:
+---
+
+# Derin Öğrenme Pipeline
+
+PyTorch tabanlı DL pipeline'ı tek komutla tüm model × veri seti × senaryo × seed (× SKAB fold) kombinasyonlarını koşturur ve rapor tablolarını üretir.
+
+## Kurulum
 
 ```bash
 pip install -r requirements.txt
+```
+
+## Komut Örnekleri
+
+Tam koşum (3 model × 2 dataset × 3 senaryo × 5 seed × SKAB 5-fold):
+
+```bash
 python -m scripts.run_deep_learning
+```
+
+Hızlı smoke test (2 epoch, tek seed, tek SKAB fold):
+
+```bash
 python -m scripts.run_deep_learning --smoke
 ```
 
-Örnek filtreli koşum:
+Filtreli smoke test:
 
 ```bash
 python -m scripts.run_deep_learning --smoke --datasets batadal --models lstm --scenarios original
 ```
+
+Parametreli örnek:
+
+```bash
+python -m scripts.run_deep_learning --models lstm gru --datasets skab --scenarios original noise --seeds 42 123
+```
+
+Google Colab'de de aynı komutlar proje kök dizininden çalıştırılabilir.
+
+## `outputs/` Klasör Yapısı
+
+```text
+outputs/
+├── <run_id>/                  # Her deney için artifact dizini
+│   ├── history.json           # Epoch bazlı train/val loss ve accuracy
+│   ├── metrics.json           # Test metrikleri (accuracy, f1, roc_auc, ...)
+│   └── model.pt               # En iyi model ağırlıkları
+├── figures/
+│   └── <run_id>/              # Run bazlı görseller
+│       ├── loss.png
+│       ├── acc.png
+│       ├── cm.png
+│       ├── roc.png
+│       └── pr.png
+├── metrics/
+│   ├── raw_results.csv        # Tüm run'ların ham metrikleri
+│   ├── table1.md / table1.csv
+│   └── table2.md / table2.csv
+├── models/                    # Rezerve dizin (create_required_dirs)
+└── logs/                      # Rezerve dizin
+```
+
+`<run_id>` formatı: `{dataset}_{model}_{scenario}_seed{seed}_fold{fold|NA}`  
+Örnek: `batadal_lstm_original_seed42_foldNA`
+
+## Senaryo Tanımları
+
+| Senaryo | Açıklama |
+| :--- | :--- |
+| **original** | İşlenmiş test verisi doğrudan kullanılır |
+| **noise** | Yalnızca test sekanslarına `DL_GAUSSIAN_NOISE_STD` ile Gaussian gürültü eklenir; eğitim aynı kalır |
+| **unseen** | Test feature'larına drift uygulanır (`X * DL_UNSEEN_DRIFT_SCALE + DL_UNSEEN_DRIFT_MEAN`); SKAB'da GroupKFold ile source_file leave-out zaten sağlanır |
+
+## Üretilen Tablolar ve Görseller
+
+**Tablolar** (`outputs/metrics/`):
+
+- **Tablo 1:** Model performansı ve stabilitesi — SKAB / BATADAL sütunlarında F1 ± std (original senaryo)
+- **Tablo 2:** Gürültü etkisi (Orijinal / Gürültülü F1) ve Unseen senaryo analizi
+- **raw_results.csv:** Her `(dataset, model, scenario, seed, fold)` kombinasyonu için ham metrikler
+
+**Görseller** (`outputs/figures/<run_id>/`):
+
+- Loss eğrisi (train + val)
+- Accuracy eğrisi (train + val)
+- Confusion Matrix
+- ROC eğrisi + AUC
+- Precision-Recall eğrisi + AUC
+
+## Sabit Hiperparametreler
+
+Tüm hiperparametreler `config/config.py` dosyasından okunur:
+
+- `MAX_EPOCHS=50`, `BATCH_SIZE=32`, `EARLY_STOPPING_PATIENCE=5`
+- `RANDOM_SEEDS=[42, 123, 2026, 7, 999]`
+- `DL_SEQUENCE_LENGTH=30`, `DL_STRIDE=1`, `DL_LEARNING_RATE=1e-3`
 
 ---
 
@@ -299,14 +399,13 @@ Tamamlanan çalışmalar:
 - Gaussian noise experiments
 - Controlled unseen experiments
 - Summary metric tabloları
+- Deep Learning pipeline (LSTM, GRU, 1D-CNN)
+- DL senaryo deneyleri (original / noise / unseen)
+- DL otomatik tablo ve görsel üretimi
 
 Devam eden çalışmalar:
 
-- Deep Learning modelleri
-- LSTM
-- GRU
-- 1D-CNN
-- Final model comparison
+- Final model comparison (DL vs Automata)
 - Final rapor yazımı
 
 ---
