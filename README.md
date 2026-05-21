@@ -233,6 +233,22 @@ Karşılaştırmalarda aşağıdaki metrikler kullanılacaktır:
 - Noise Robustness
 - Unseen Pattern Robustness
 
+## Derin Öğrenme Pipeline
+
+Bağımlılıkları kurduktan sonra proje kök dizininden aşağıdaki komutlarla deneyleri çalıştırabilirsiniz:
+
+```bash
+pip install -r requirements.txt
+python -m scripts.run_deep_learning
+python -m scripts.run_deep_learning --smoke
+```
+
+Örnek filtreli koşum:
+
+```bash
+python -m scripts.run_deep_learning --smoke --datasets batadal --models lstm --scenarios original
+```
+
 ---
 
 # Deneysel Senaryolar
