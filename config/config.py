@@ -58,7 +58,55 @@ GAUSSIAN_NOISE_STD = 0.05
 # Classification threshold for automata anomaly decision
 AUTOMATA_PROBABILITY_THRESHOLD = 0.10
 
+# Deep learning outputs
+OUTPUTS_DIR = PROJECT_ROOT / "outputs"
+OUTPUTS_FIGURES_DIR = OUTPUTS_DIR / "figures"
+OUTPUTS_METRICS_DIR = OUTPUTS_DIR / "metrics"
+OUTPUTS_MODELS_DIR = OUTPUTS_DIR / "models"
+OUTPUTS_LOGS_DIR = OUTPUTS_DIR / "logs"
+
+# Deep learning hyperparameters
+DL_SEQUENCE_LENGTH = 30
+DL_STRIDE = 1
+DL_LEARNING_RATE = 1e-3
+
+try:
+    import torch
+
+    DL_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+except ImportError:
+    DL_DEVICE = "cpu"
+
+# Model-specific parameters
+LSTM_HIDDEN_SIZE = 64
+LSTM_NUM_LAYERS = 1
+LSTM_DROPOUT = 0.2
+
+GRU_HIDDEN_SIZE = 64
+GRU_NUM_LAYERS = 1
+GRU_DROPOUT = 0.2
+
+CNN1D_NUM_FILTERS = 64
+CNN1D_KERNEL_SIZE = 3
+CNN1D_DROPOUT = 0.3
+
+# Deep learning scenario constants
+DL_GAUSSIAN_NOISE_STD = 0.1
+DL_UNSEEN_DRIFT_MEAN = 0.3
+DL_UNSEEN_DRIFT_SCALE = 1.15
+DL_SKAB_N_FOLDS = 5
+
 
 def create_required_dirs():
-    for directory in [RESULTS_DIR, LOGS_DIR, METRICS_DIR, FIGURES_DIR]:
+    for directory in [
+        RESULTS_DIR,
+        LOGS_DIR,
+        METRICS_DIR,
+        FIGURES_DIR,
+        OUTPUTS_DIR,
+        OUTPUTS_FIGURES_DIR,
+        OUTPUTS_METRICS_DIR,
+        OUTPUTS_MODELS_DIR,
+        OUTPUTS_LOGS_DIR,
+    ]:
         directory.mkdir(parents=True, exist_ok=True)
