@@ -11,6 +11,7 @@ for path in (PROJECT_ROOT, SRC_DIR):
         sys.path.insert(0, path_str)
 
 import config.config as cfg
+from deep_learning.data_loader import build_batadal_cache, build_skab_cache
 from deep_learning.experiment_runner import run_single_experiment
 from deep_learning.results_aggregator import (
     aggregate_mean_std,
@@ -65,6 +66,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Debug mode: MAX_EPOCHS=2, single seed, single SKAB fold.",
     )
+    parser.add_argument(
+        "--fast",
+        action="store_true",
+        help="Skip per-run plot generation (metrics.json, history.json, model.pt still saved).",
+    )
     return parser.parse_args()
 
 
@@ -103,10 +109,30 @@ def main() -> None:
     experiments, max_epochs = build_experiment_plan(args)
     total = len(experiments)
     run_dirs: list[Path] = []
+    save_plots = not args.fast
+
+    skab_cache = None
+    batadal_cache = None
+    if "skab" in args.datasets:
+        print("Preloading SKAB data and GroupKFold splits...")
+        skab_cache = build_skab_cache(cfg.DL_SKAB_N_FOLDS)
+        print(
+            f"SKAB cached: {skab_cache.X.shape[0]} rows, "
+            f"{len(skab_cache.splits)} folds"
+        )
+    if "batadal" in args.datasets:
+        print("Preloading BATADAL data...")
+        batadal_cache = build_batadal_cache()
+        print(
+            f"BATADAL cached: train={len(batadal_cache.X_tr)}, "
+            f"val={len(batadal_cache.X_val)}, test={len(batadal_cache.X_te)}"
+        )
 
     print(
         f"Starting deep learning pipeline | runs={total}, max_epochs={max_epochs}, "
-        f"device={cfg.DL_DEVICE}"
+        f"device={cfg.DL_DEVICE}, batch_size={cfg.BATCH_SIZE}, "
+        f"num_workers={cfg.DL_NUM_WORKERS}, pin_memory={cfg.DL_PIN_MEMORY}, "
+        f"amp={cfg.DL_USE_AMP}, save_plots={save_plots}"
     )
 
     for index, (model, dataset, scenario, seed, fold) in enumerate(experiments, start=1):
@@ -122,6 +148,9 @@ def main() -> None:
             scenario=scenario,
             seed=seed,
             fold=fold,
+            skab_cache=skab_cache,
+            batadal_cache=batadal_cache,
+            save_plots=save_plots,
         )
         run_dirs.append(Path(result["run_dir"]))
         print(f"[{index}/{total}] completed {run_id} | f1={result['f1']:.4f}")

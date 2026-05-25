@@ -2,6 +2,8 @@ from typing import Any
 
 import config.config as cfg
 from deep_learning.data_loader import (
+    BatadalDataCache,
+    SkabDataCache,
     build_dataloaders,
     load_batadal_multivariate,
     load_skab_multivariate,
@@ -20,6 +22,9 @@ def run_single_experiment(
     scenario: str,
     seed: int,
     fold: int | None = None,
+    skab_cache: SkabDataCache | None = None,
+    batadal_cache: BatadalDataCache | None = None,
+    save_plots: bool = True,
 ) -> dict[str, Any]:
     seed_everything(seed)
     cfg.create_required_dirs()
@@ -32,8 +37,12 @@ def run_single_experiment(
         if fold is None:
             raise ValueError("fold must be specified when dataset_name is 'skab'.")
 
-        X, y, groups = load_skab_multivariate()
-        splits = make_skab_groupkfold_splits(X, y, groups, cfg.DL_SKAB_N_FOLDS)
+        if skab_cache is not None:
+            X, y = skab_cache.X, skab_cache.y
+            splits = skab_cache.splits
+        else:
+            X, y, groups = load_skab_multivariate()
+            splits = make_skab_groupkfold_splits(X, y, groups, cfg.DL_SKAB_N_FOLDS)
 
         if fold < 0 or fold >= len(splits):
             raise ValueError(
@@ -45,7 +54,15 @@ def run_single_experiment(
         X_val, y_val = X[val_idx], y[val_idx]
         X_te, y_te = X[test_idx], y[test_idx]
     elif dataset_name == "batadal":
-        X_tr, y_tr, X_val, y_val, X_te, y_te = load_batadal_multivariate()
+        if batadal_cache is not None:
+            X_tr = batadal_cache.X_tr
+            y_tr = batadal_cache.y_tr
+            X_val = batadal_cache.X_val
+            y_val = batadal_cache.y_val
+            X_te = batadal_cache.X_te
+            y_te = batadal_cache.y_te
+        else:
+            X_tr, y_tr, X_val, y_val, X_te, y_te = load_batadal_multivariate()
     else:
         raise ValueError(f"Unknown dataset '{dataset_name}'. Supported datasets: skab, batadal")
 
@@ -88,6 +105,7 @@ def run_single_experiment(
         cfg.DL_LEARNING_RATE,
         cfg.DL_DEVICE,
         seed,
+        use_amp=cfg.DL_USE_AMP,
     )
 
     history = fit_result["history"]
@@ -104,6 +122,7 @@ def run_single_experiment(
         best_state_dict,
         y_true,
         y_prob,
+        save_plots=save_plots,
     )
 
     print(

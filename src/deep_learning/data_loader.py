@@ -1,4 +1,6 @@
 import random
+import sys
+from dataclasses import dataclass
 from typing import Literal
 
 import numpy as np
@@ -11,6 +13,9 @@ from config.config import (
     BATADAL_TEST_SCALED,
     BATADAL_TRAIN_SCALED,
     BATADAL_VAL_SCALED,
+    DL_NUM_WORKERS,
+    DL_PIN_MEMORY,
+    DL_PREFETCH_FACTOR,
     SKAB_TEST_SCALED,
     SKAB_TRAIN_SCALED,
 )
@@ -136,6 +141,55 @@ def load_batadal_multivariate() -> tuple[
     return X_tr, y_tr, X_val, y_val, X_te, y_te
 
 
+@dataclass(frozen=True)
+class SkabDataCache:
+    X: np.ndarray
+    y: np.ndarray
+    groups: np.ndarray
+    splits: list[tuple[np.ndarray, np.ndarray, np.ndarray]]
+
+
+@dataclass(frozen=True)
+class BatadalDataCache:
+    X_tr: np.ndarray
+    y_tr: np.ndarray
+    X_val: np.ndarray
+    y_val: np.ndarray
+    X_te: np.ndarray
+    y_te: np.ndarray
+
+
+def build_skab_cache(n_splits: int) -> SkabDataCache:
+    X, y, groups = load_skab_multivariate()
+    splits = make_skab_groupkfold_splits(X, y, groups, n_splits)
+    return SkabDataCache(X=X, y=y, groups=groups, splits=splits)
+
+
+def build_batadal_cache() -> BatadalDataCache:
+    X_tr, y_tr, X_val, y_val, X_te, y_te = load_batadal_multivariate()
+    return BatadalDataCache(
+        X_tr=X_tr,
+        y_tr=y_tr,
+        X_val=X_val,
+        y_val=y_val,
+        X_te=X_te,
+        y_te=y_te,
+    )
+
+
+def _dataloader_kwargs() -> dict[str, object]:
+    kwargs: dict[str, object] = {}
+    if DL_NUM_WORKERS > 0:
+        kwargs["num_workers"] = DL_NUM_WORKERS
+        kwargs["prefetch_factor"] = DL_PREFETCH_FACTOR
+        # Keep workers alive across epochs (critical on Windows; otherwise 4
+        # processes are spawned/destroyed every epoch → large slowdown).
+        kwargs["persistent_workers"] = True
+    if DL_PIN_MEMORY:
+        kwargs["pin_memory"] = True
+    return kwargs
+
+
 def build_dataloaders(
     X_tr: np.ndarray,
     y_tr: np.ndarray,
@@ -154,22 +208,26 @@ def build_dataloaders(
 
     generator = torch.Generator()
     generator.manual_seed(seed)
+    loader_kwargs = _dataloader_kwargs()
 
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
         shuffle=True,
         generator=generator,
+        **loader_kwargs,
     )
     val_loader = DataLoader(
         val_dataset,
         batch_size=batch_size,
         shuffle=False,
+        **loader_kwargs,
     )
     test_loader = DataLoader(
         test_dataset,
         batch_size=batch_size,
         shuffle=False,
+        **loader_kwargs,
     )
 
     return train_loader, val_loader, test_loader

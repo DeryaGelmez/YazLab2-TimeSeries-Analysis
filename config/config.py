@@ -70,12 +70,26 @@ DL_SEQUENCE_LENGTH = 30
 DL_STRIDE = 1
 DL_LEARNING_RATE = 1e-3
 
+# DataLoader / GPU throughput (batch size stays 32 per project spec)
+DL_NUM_WORKERS = 4
+DL_PREFETCH_FACTOR = 2
+DL_PIN_MEMORY = True
+DL_USE_AMP = True
+
 try:
     import torch
 
-    DL_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+    _CUDA_AVAILABLE = torch.cuda.is_available()
+    DL_DEVICE = "cuda" if _CUDA_AVAILABLE else "cpu"
+    if not _CUDA_AVAILABLE:
+        DL_NUM_WORKERS = 0
+        DL_PIN_MEMORY = False
+        DL_USE_AMP = False
 except ImportError:
     DL_DEVICE = "cpu"
+    DL_NUM_WORKERS = 0
+    DL_PIN_MEMORY = False
+    DL_USE_AMP = False
 
 # Model-specific parameters
 LSTM_HIDDEN_SIZE = 64

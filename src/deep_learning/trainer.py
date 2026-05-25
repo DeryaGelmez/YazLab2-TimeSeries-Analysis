@@ -43,27 +43,53 @@ def _binary_accuracy(logits: torch.Tensor, targets: torch.Tensor) -> float:
     return (preds == targets).float().mean().item()
 
 
+def _use_non_blocking(device: torch.device | str) -> bool:
+    return str(device).startswith("cuda")
+
+
+def _to_device(
+    batch_x: torch.Tensor,
+    batch_y: torch.Tensor,
+    device: torch.device | str,
+    non_blocking: bool,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    batch_x = batch_x.to(device, non_blocking=non_blocking)
+    batch_y = batch_y.to(device, non_blocking=non_blocking).unsqueeze(1)
+    return batch_x, batch_y
+
+
 def train_one_epoch(
     model: nn.Module,
     loader: DataLoader,
     criterion: nn.Module,
     optimizer: torch.optim.Optimizer,
     device: torch.device | str,
+    use_amp: bool = False,
 ) -> dict[str, float]:
     model.train()
     total_loss = 0.0
     total_acc = 0.0
     num_batches = 0
+    non_blocking = _use_non_blocking(device)
+    scaler = torch.amp.GradScaler("cuda") if use_amp else None
 
     for batch_x, batch_y in loader:
-        batch_x = batch_x.to(device)
-        batch_y = batch_y.to(device).unsqueeze(1)
+        batch_x, batch_y = _to_device(batch_x, batch_y, device, non_blocking)
 
-        optimizer.zero_grad()
-        logits = model(batch_x)
-        loss = criterion(logits, batch_y)
-        loss.backward()
-        optimizer.step()
+        optimizer.zero_grad(set_to_none=True)
+
+        if use_amp and scaler is not None:
+            with torch.amp.autocast("cuda"):
+                logits = model(batch_x)
+                loss = criterion(logits, batch_y)
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            logits = model(batch_x)
+            loss = criterion(logits, batch_y)
+            loss.backward()
+            optimizer.step()
 
         total_loss += loss.item()
         total_acc += _binary_accuracy(logits.detach(), batch_y)
@@ -84,6 +110,7 @@ def evaluate(
     loader: DataLoader,
     criterion: nn.Module,
     device: torch.device | str,
+    use_amp: bool = False,
 ) -> dict[str, object]:
     model.eval()
     total_loss = 0.0
@@ -91,13 +118,18 @@ def evaluate(
     num_batches = 0
     y_true: list[float] = []
     y_prob: list[float] = []
+    non_blocking = _use_non_blocking(device)
 
     for batch_x, batch_y in loader:
-        batch_x = batch_x.to(device)
-        batch_y = batch_y.to(device).unsqueeze(1)
+        batch_x, batch_y = _to_device(batch_x, batch_y, device, non_blocking)
 
-        logits = model(batch_x)
-        loss = criterion(logits, batch_y)
+        if use_amp:
+            with torch.amp.autocast("cuda"):
+                logits = model(batch_x)
+                loss = criterion(logits, batch_y)
+        else:
+            logits = model(batch_x)
+            loss = criterion(logits, batch_y)
 
         probs = torch.sigmoid(logits)
 
@@ -128,8 +160,12 @@ def fit(
     lr: float,
     device: torch.device | str,
     seed: int,
+    use_amp: bool = False,
 ) -> dict[str, object]:
     seed_everything(seed)
+
+    if use_amp and not str(device).startswith("cuda"):
+        use_amp = False
 
     model = model.to(device)
     criterion = nn.BCEWithLogitsLoss()
@@ -144,8 +180,12 @@ def fit(
     }
 
     for epoch in range(max_epochs):
-        train_metrics = train_one_epoch(model, train_loader, criterion, optimizer, device)
-        val_metrics = evaluate(model, val_loader, criterion, device)
+        train_metrics = train_one_epoch(
+            model, train_loader, criterion, optimizer, device, use_amp=use_amp
+        )
+        val_metrics = evaluate(
+            model, val_loader, criterion, device, use_amp=use_amp
+        )
 
         history["train_loss"].append(train_metrics["loss"])
         history["val_loss"].append(val_metrics["loss"])

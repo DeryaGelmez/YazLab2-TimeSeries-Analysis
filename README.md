@@ -289,7 +289,38 @@ Parametreli örnek:
 python -m scripts.run_deep_learning --models lstm gru --datasets skab --scenarios original noise --seeds 42 123
 ```
 
+270 run gibi uzun grid koşularında matplotlib görsellerini atlayarak hızlandırma (metrikler ve `model.pt` kaydedilir):
+
+```bash
+python -m scripts.run_deep_learning --fast
+```
+
+Kayıtlı `history.json` ve `model.pt` dosyalarından görselleri **yeniden eğitmeden** üretme:
+
+```bash
+# Raporda kullanılacak 11 temsilci run (önerilen liste)
+python -m scripts.regenerate_figures --manifest docs/dl_figures_curated_run_ids.txt
+
+# Tek run
+python -m scripts.regenerate_figures --run-ids batadal_lstm_original_seed123_foldNA
+
+# Tüm 270 run (1–3 saat, eğitim yok)
+python -m scripts.regenerate_figures --all
+```
+
+Çıktı: `outputs/figures/<run_id>/` altında `loss.png`, `acc.png`, `cm.png`, `roc.png`, `pr.png`.
+
 Google Colab'de de aynı komutlar proje kök dizininden çalıştırılabilir.
+
+## Performans (proje isterlerine uygun)
+
+Aşağıdaki optimizasyonlar **batch size=32** ve diğer sabit hiperparametreleri değiştirmeden uygulanır (`config/config.py`):
+
+- SKAB/BATADAL verisi CLI başında bir kez yüklenir (fold başına CSV tekrarı yok)
+- `DataLoader`: `num_workers`, `pin_memory`, `persistent_workers`, `prefetch_factor` (CUDA yoksa otomatik kapatılır)
+- GPU transfer: `non_blocking=True`
+- Mixed precision (`DL_USE_AMP`) CUDA üzerinde eğitim/validation hızlandırması
+- `--fast`: run başına 5 PNG üretimini atlar; tablolar için `metrics.json` yeterlidir
 
 ## `outputs/` Klasör Yapısı
 
@@ -348,6 +379,7 @@ Tüm hiperparametreler `config/config.py` dosyasından okunur:
 - `MAX_EPOCHS=50`, `BATCH_SIZE=32`, `EARLY_STOPPING_PATIENCE=5`
 - `RANDOM_SEEDS=[42, 123, 2026, 7, 999]`
 - `DL_SEQUENCE_LENGTH=30`, `DL_STRIDE=1`, `DL_LEARNING_RATE=1e-3`
+- `DL_NUM_WORKERS=4`, `DL_PIN_MEMORY=True`, `DL_USE_AMP=True` (CPU ortamında otomatik devre dışı)
 
 ---
 

@@ -195,13 +195,12 @@ def save_run_artifacts(
     model_state_dict: dict[str, torch.Tensor],
     y_true: list[float] | np.ndarray | None = None,
     y_prob: list[float] | np.ndarray | None = None,
+    save_plots: bool = True,
 ) -> None:
     run_dir = Path(run_dir)
     run_id = run_dir.name
-    figures_dir = OUTPUTS_FIGURES_DIR / run_id
 
     run_dir.mkdir(parents=True, exist_ok=True)
-    figures_dir.mkdir(parents=True, exist_ok=True)
 
     with open(run_dir / "history.json", "w", encoding="utf-8") as file:
         json.dump(history, file, indent=2)
@@ -210,6 +209,12 @@ def save_run_artifacts(
         json.dump(metrics, file, indent=2)
 
     torch.save(model_state_dict, run_dir / "model.pt")
+
+    if not save_plots:
+        return
+
+    figures_dir = OUTPUTS_FIGURES_DIR / run_id
+    figures_dir.mkdir(parents=True, exist_ok=True)
 
     plot_loss_curve(history, figures_dir / "loss.png")
     plot_accuracy_curve(history, figures_dir / "acc.png")
