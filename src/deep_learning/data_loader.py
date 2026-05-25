@@ -184,7 +184,7 @@ def _dataloader_kwargs() -> dict[str, object]:
         kwargs["prefetch_factor"] = DL_PREFETCH_FACTOR
         # Keep workers alive across epochs (critical on Windows; otherwise 4
         # processes are spawned/destroyed every epoch → large slowdown).
-        kwargs["persistent_workers"] = True
+        # kwargs["persistent_workers"] = False
     if DL_PIN_MEMORY:
         kwargs["pin_memory"] = True
     return kwargs

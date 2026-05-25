@@ -71,7 +71,7 @@ DL_STRIDE = 1
 DL_LEARNING_RATE = 1e-3
 
 # DataLoader / GPU throughput (batch size stays 32 per project spec)
-DL_NUM_WORKERS = 4
+DL_NUM_WORKERS = 0
 DL_PREFETCH_FACTOR = 2
 DL_PIN_MEMORY = True
 DL_USE_AMP = True
