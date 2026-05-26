@@ -350,15 +350,19 @@ outputs/
 │       ├── roc.png
 │       └── pr.png
 ├── metrics/
-│   ├── raw_results.csv        # Tüm run'ların ham metrikleri
+│   ├── raw_results.csv        # Grid 1 — tüm run'ların ham metrikleri
+│   ├── raw_results_wbce.csv   # Grid 2 — weighted BCE ham metrikleri
 │   ├── table1.md / table1.csv
-│   └── table2.md / table2.csv
+│   ├── table1_wbce.md / table1_wbce.csv
+│   ├── table2.md / table2.csv
+│   └── table2_wbce.md / table2_wbce.csv
 ├── models/                    # Rezerve dizin (create_required_dirs)
 └── logs/                      # Rezerve dizin
 ```
 
 `<run_id>` formatı: `{dataset}_{model}_{scenario}_seed{seed}_fold{fold|NA}`  
-Örnek: `batadal_lstm_original_seed42_foldNA`
+Örnek: `batadal_lstm_original_seed42_foldNA`  
+Grid 2 (weighted BCE) soneki: `..._foldNA_wbce`
 
 ## Senaryo Tanımları
 
@@ -391,7 +395,295 @@ Tüm hiperparametreler `config/config.py` dosyasından okunur:
 - `MAX_EPOCHS=50`, `BATCH_SIZE=32`, `EARLY_STOPPING_PATIENCE=5`
 - `RANDOM_SEEDS=[42, 123, 2026, 7, 999]`
 - `DL_SEQUENCE_LENGTH=30`, `DL_STRIDE=1`, `DL_LEARNING_RATE=1e-3`
-- `DL_NUM_WORKERS=4`, `DL_PIN_MEMORY=True`, `DL_USE_AMP=True` (CPU ortamında otomatik devre dışı)
+- `DL_NUM_WORKERS=0`, `DL_PIN_MEMORY=True`, `DL_USE_AMP=True` (CPU ortamında otomatik devre dışı; Windows DataLoader benchmark sonrası `num_workers=0` seçildi)
+
+Grid 2 ek sabitleri:
+
+- `DL_POS_WEIGHT_MAX=25.0` — train pencere pozitif oranından türetilen `pos_weight` tavanı
+- `DL_WEIGHTED_BCE_SUFFIX="_wbce"` — weighted run klasör/metrik ayrımı
+
+---
+
+# Derin Öğrenme — Deney Sonuçları ve Analiz (Taslak)
+
+> **Durum:** Bu bölüm, nihai raporun derin öğrenme (DL) bölümüne ilişkin taslak metnidir. Otomata tabanlı model sonuçları elde edildiğinde *DL–Otomata Karşılaştırması* alt bölümü tamamlanacaktır. Tablolardaki değerler, her biri 270 deney içeren iki grid'in ham çıktılarından (`raw_results.csv`, `raw_results_wbce.csv`) türetilmiştir.
+
+## Deney Tasarımı Özeti
+
+Derin öğrenme deneyleri, proje tanımında belirtilen deney protokolü esas alınarak yürütülmüştür: üç model (LSTM, GRU, 1D-CNN), iki veri seti (SKAB, BATADAL), üç senaryo (original, noise, unseen) ve beş bağımsız rastgele tohum (seed). SKAB için dosya bazlı GroupKFold (5 fold), BATADAL için zaman sıralı %60/%20/%20 bölünme uygulanmıştır.
+
+| Parametre | Değer |
+| :--- | :--- |
+| Modeller | LSTM, GRU, 1D-CNN |
+| Veri setleri | SKAB (GroupKFold, 5 fold), BATADAL (zaman sıralı %60/%20/%20) |
+| Senaryolar | original, noise (Gaussian), unseen (distribution drift) |
+| Seed'ler | 42, 123, 2026, 7, 999 |
+| Toplam run / grid | **270** (SKAB: 225 fold-run, BATADAL: 45 run) |
+| Kayıp (Grid 1) | `BCEWithLogitsLoss()` — pos_weight yok |
+| Kayıp (Grid 2) | `BCEWithLogitsLoss(pos_weight=(1−p)/p)` — train pencere pozitif oranı; tavan 25 |
+
+**Sınıf dağılımı gözlemi:** SKAB'da ortalama pos_weight ≈ **1.85** (görece dengeli sınıf dağılımı). BATADAL'da ≈ **23.28** (pozitif sınıf oranı ~%4) — belirgin sınıf dengesizliği.
+
+## Grid 1 — Baseline BCE
+
+**Komut:** `python -m scripts.run_deep_learning` (`--fast` ile görselsiz hızlandırma kullanılabilir)
+
+**Amaç:** Standart ikili çapraz entropi (BCE) kayıp fonksiyonu ile sliding-window tabanlı DL modellerinin SKAB ve BATADAL üzerindeki temel performansının ölçülmesi.
+
+**Özet bulgular:**
+
+- **SKAB:** En yüksek F1 değeri 1D-CNN modelinde elde edilmiştir (F1 ≈ 0.58); GRU ve LSTM sırasıyla ~0.49 ve ~0.46 düzeyindedir. Tüm modeller, beş seed üzerinde anlamlı F1 skorları üretmiştir.
+- **BATADAL:** Deneylerin büyük bölümünde **majority-class collapse** (çoğunluk sınıfı çökmesi) gözlenmiştir (accuracy ≈ 0.90, F1 ≈ 0). Belirgin istisna: **LSTM / seed123 / F1 = 0.780**. GRU modelinde seed42 ile F1 = 0.407 gibi sınırlı başarılar kaydedilmiştir.
+- **Collapse oranı (BATADAL, tüm senaryolar):** 25/45 run (%55.6) — tanım: recall < 0.05 ve accuracy > 0.85.
+
+### Tablo 1a — Grid 1, Original Senaryo (F1 ± std)
+
+| Model | SKAB | BATADAL |
+| :--- | :---: | :---: |
+| **LSTM** | 0.463 ± 0.216 | 0.156 ± 0.349 |
+| **GRU** | 0.492 ± 0.256 | 0.143 ± 0.167 |
+| **1D-CNN** | **0.577 ± 0.091** | 0.065 ± 0.078 |
+
+**Model sıralaması (SKAB):** 1D-CNN > GRU > LSTM. **BATADAL:** Tüm modeller düşük ortalama F1 değerleri sergilemiştir; ortalamalar büyük ölçüde seed123 LSTM aykırı değerine (outlier) bağlıdır.
+
+### Grid 1 — SKAB Detay (Original)
+
+| Model | Ort. F1 | Ort. Acc | Ort. Recall | Ort. Prec | Ort. ROC-AUC | En iyi run | En düşük run |
+| :--- | :---: | :---: | :---: | :---: | :---: | :--- | :--- |
+| LSTM | 0.463 | 0.684 | 0.440 | 0.551 | 0.660 | seed7/fold4, F1=0.727 | seed2026/fold1, F1=0.038 |
+| GRU | 0.492 | 0.715 | 0.473 | 0.588 | 0.706 | seed999/fold4, F1=0.738 | seed42/fold3, F1=0.005 |
+| 1D-CNN | **0.577** | 0.729 | 0.535 | 0.651 | 0.739 | seed999/fold4, F1=0.762 | seed2026/fold3, F1=0.391 |
+
+**Seed bazlı F1 (GRU, fold ortalaması):** 7→0.543, 42→0.516, 123→0.522, 999→0.513, 2026→0.366
+
+### Grid 1 — SKAB Senaryo Karşılaştırması
+
+| Model | Original F1 | Noise F1 | Unseen F1 | Gürültü kaybı |
+| :--- | :---: | :---: | :---: | :---: |
+| LSTM | 0.463 | 0.453 | 0.270 | ~%2.1 |
+| GRU | 0.492 | 0.481 | 0.220 | ~%2.3 |
+| 1D-CNN | 0.577 | 0.548 | 0.235 | ~%5.0 |
+
+SKAB veri setinde gürültü etkisi sınırlıdır (%2–5 F1 düşüşü). Unseen (drift) senaryosunda F1 değerleri belirgin biçimde azalmaktadır (~0.22–0.27).
+
+### Grid 1 — BATADAL Detay (Original)
+
+| Model | Ort. F1 | Ort. Acc | Ort. Recall | Ort. Prec | Ort. ROC-AUC | Medyan F1 | F1>0.05 seed sayısı |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| LSTM | 0.156 | 0.913 | 0.138 | 0.180 | 0.980 | 0.000 | 1/5 |
+| GRU | 0.143 | 0.906 | 0.090 | 0.414 | 0.984 | 0.135 | 3/5 |
+| 1D-CNN | 0.065 | 0.904 | 0.035 | 0.575 | 0.622 | 0.025 | 2/5 |
+
+**Seed bazlı F1 (LSTM):** 123→**0.780**, diğer tüm seed'ler→0.000
+
+**Seed bazlı F1 (GRU):** 42→0.407, 2026→0.172, 123→0.135, 7→0.000, 999→0.000
+
+**En yüksek performanslı BATADAL run'ı (Grid 1):** LSTM / seed123 / original — F1=0.780, Acc=0.962, Recall=0.688, Precision=0.797, ROC-AUC=0.989
+
+**Majority-class collapse profili (LSTM / seed42):** F1=0.000, Acc=0.900, Recall=0.000, ROC-AUC=0.983 — model örnekleri sıralayabilmekte (yüksek ROC-AUC), ancak varsayılan eşik değerinde tüm örnekleri negatif sınıfa atamaktadır.
+
+### Grid 1 — BATADAL Senaryo Karşılaştırması
+
+| Model | Original F1 | Noise F1 | Unseen F1 |
+| :--- | :---: | :---: | :---: |
+| LSTM | 0.156 | 0.163 | 0.189 |
+| GRU | 0.143 | 0.146 | **0.241** |
+| 1D-CNN | 0.065 | 0.069 | 0.027 |
+
+Unseen senaryosunda GRU (F1=0.241) ve LSTM seed123 (unseen F1=0.816) belirli düzeyde sinyal üretmiştir; original senaryoda genel tablo majority-class collapse ağırlıklıdır.
+
+---
+
+## Grid 2 — Weighted BCE (Imbalance-Aware)
+
+**Komut:** `python -m scripts.run_deep_learning --weighted-bce`
+
+**Amaç:** Eğitim kümesindeki sliding-window pozitif oranından türetilen `pos_weight` katsayısı ile sınıf dengesizliğinin etkisini azaltmak ve pozitif sınıf recall değerini artırmak.
+
+**Özet bulgular:**
+
+- **SKAB:** **GRU modeli en yüksek performansı** göstermiştir (F1 ≈ 0.62 ± 0.10). Grid 1'e kıyasla **+0.126 F1** artışı ve belirgin ölçüde düşük standart sapma (0.256→0.095) gözlenmiştir. 1D-CNN değerleri neredeyse değişmemiş; LSTM hafif artış göstermiştir.
+- **BATADAL:** Collapse oranı Grid 1 ile **aynı** kalmıştır (%55.6). Ortalama F1 değerleri Grid 1 ile eşdeğer veya daha düşüktür. seed123 LSTM: 0.780→0.708; seed42 GRU: 0.407→0.041 (**performans düşüşü**).
+- Weighted BCE, SKAB'da GRU performansını sistematik biçimde iyileştirirken BATADAL'da yapısal sorunu gidermemiştir; sınıf dengesizliğine yönelik bu müdahalenin veri setine özgü etkileri ayrıca değerlendirilmelidir.
+
+### Tablo 1b — Grid 2, Original Senaryo (F1 ± std)
+
+| Model | SKAB | BATADAL |
+| :--- | :---: | :---: |
+| **LSTM** | 0.474 ± 0.114 | 0.152 ± 0.312 |
+| **GRU** | **0.618 ± 0.095** | 0.025 ± 0.038 |
+| **1D-CNN** | 0.576 ± 0.087 | 0.012 ± 0.028 |
+
+**Model sıralaması (SKAB):** **GRU > 1D-CNN > LSTM** (Grid 1'deki 1D-CNN > GRU sıralamasının tersine dönmüştür).
+
+### Grid 2 — SKAB Detay (Original)
+
+| Model | Ort. F1 | Ort. Acc | Ort. Recall | Ort. Prec | Ort. ROC-AUC | En iyi run | En düşük run |
+| :--- | :---: | :---: | :---: | :---: | :---: | :--- | :--- |
+| LSTM | 0.474 | 0.622 | 0.499 | 0.482 | 0.610 | seed42/fold4, F1=0.602 | seed999/fold2, F1=0.229 |
+| GRU | **0.618** | 0.728 | 0.642 | 0.622 | 0.775 | seed123/fold4, F1=0.768 | seed42/fold1, F1=0.290 |
+| 1D-CNN | 0.576 | 0.702 | 0.578 | 0.591 | 0.724 | seed999/fold0, F1=0.756 | seed42/fold0, F1=0.432 |
+
+**Seed bazlı F1 (GRU, fold ortalaması):** 7→0.616, 42→0.572, 123→0.643, 999→0.640, 2026→**0.620** (Grid 1'de 2026→0.366; **+0.254** iyileşme)
+
+### Grid 2 — SKAB Senaryo Karşılaştırması
+
+| Model | Original F1 | Noise F1 | Unseen F1 | Gürültü kaybı |
+| :--- | :---: | :---: | :---: | :---: |
+| LSTM | 0.474 | 0.467 | 0.293 | ~%1.6 |
+| GRU | **0.618** | 0.606 | **0.321** | ~%2.0 |
+| 1D-CNN | 0.576 | 0.557 | 0.288 | ~%3.4 |
+
+Weighted BCE, unseen senaryosunda da SKAB veri setinde tutarlı iyileşme sağlamıştır (GRU: 0.220→0.321).
+
+### Grid 2 — BATADAL Detay (Original)
+
+| Model | Ort. F1 | Ort. Acc | Ort. Recall | Ort. Prec | Ort. ROC-AUC | Medyan F1 | F1>0.05 seed sayısı |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| LSTM | 0.152 | 0.895 | 0.135 | 0.174 | 0.964 | 0.000 | 1/5 |
+| GRU | 0.025 | 0.895 | 0.015 | 0.085 | 0.962 | 0.000 | 1/5 |
+| 1D-CNN | 0.012 | 0.884 | 0.008 | 0.035 | 0.353 | 0.000 | 1/5 |
+
+**Seed bazlı F1 (LSTM):** 123→**0.708**, 999→0.050, diğerleri→0.000
+
+**Karşılaştırmalı örnek — BATADAL / GRU / seed42 / original:**
+
+| Metrik | Grid 1 (Baseline) | Grid 2 (Weighted) |
+| :--- | :---: | :---: |
+| F1 | **0.407** | 0.041 |
+| Recall | 0.275 | 0.025 |
+| Precision | 0.786 | 0.118 |
+| ROC-AUC | 0.983 | 0.965 |
+
+### Grid 2 — BATADAL Senaryo Karşılaştırması
+
+| Model | Original F1 | Noise F1 | Unseen F1 |
+| :--- | :---: | :---: | :---: |
+| LSTM | 0.152 | 0.152 | 0.172 |
+| GRU | 0.025 | 0.056 | 0.170 |
+| 1D-CNN | 0.012 | 0.013 | 0.032 |
+
+---
+
+## Grid 1 vs Grid 2 — Karşılaştırmalı Analiz
+
+### Tablo 1c — F1 Değişimi (Grid 2 − Grid 1, Original Senaryo)
+
+| Model | Δ SKAB | Δ BATADAL | Değerlendirme |
+| :--- | :---: | :---: | :--- |
+| **LSTM** | +0.012 | −0.004 | SKAB'da sınırlı artış; BATADAL'da anlamlı değişim yok |
+| **GRU** | **+0.126** | −0.117 | SKAB'da belirgin iyileşme; BATADAL'da belirgin düşüş |
+| **1D-CNN** | ~0 | −0.052 | SKAB'da stabil; BATADAL'da düşüş |
+
+### Ana Bulgular
+
+| Bulgu | Detay |
+| :--- | :--- |
+| SKAB / GRU | +0.126 F1, seed std 0.256→0.095 — weighted BCE SKAB'da olumlu etki |
+| SKAB / 1D-CNN | Değişim yok — model zaten dengeli sınıf dağılımında yeterli performans göstermekteydi |
+| BATADAL genel | Collapse oranı %55.6 — weighted BCE yapısal sorunu gidermedi |
+| BATADAL seed42 / GRU | 0.407 → 0.041 — kısmen başarılı konfigürasyonda performans kaybı |
+| BATADAL seed123 / LSTM | 0.780 → 0.708 — en yüksek F1 değerinde hafif düşüş |
+| F1>0.05 run sayısı (BATADAL original) | Grid 1 GRU 3/5 → Grid 2 GRU 1/5 |
+
+**Yorum:** `pos_weight ≈ 23.3` formülasyonu, SKAB'da (pos_weight ≈ 1.85) GRU optimizasyonunu sistematik biçimde iyileştirirken, BATADAL'da seed42/GRU gibi kısmen başarılı konfigürasyonlarda performans düşüşüne yol açmıştır. Sınıf dengesizliği düzeltmesinin etkisinin veri seti özelliklerine ve başlatma (seed) koşullarına bağlı olduğu görülmektedir.
+
+---
+
+## SKAB — Birleşik Değerlendirme
+
+SKAB veri setinde derin öğrenme modelleri, belirlenen deney protokolü kapsamında **tutarlı anomali tespiti** performansı sergilemiştir.
+
+**Referans DL sonucu (otomata karşılaştırması için):** Grid 2 / GRU / original — **F1 = 0.618 ± 0.095** (5 seed, 5 fold ortalaması).
+
+**Gerekçe:** Grid 2 (weighted BCE), güncel pipeline'ı temsil etmektedir; SKAB'da en yüksek ve en stabil performans GRU modeli ile elde edilmiştir. Grid 1 ile karşılaştırma, DL içi ablation analizi olarak sunulacaktır.
+
+**Gürültü dayanıklılığı:** Her iki gridde SKAB F1 düşüşü ~%2–5 aralığındadır; düşük seviyeli Gaussian gürültü altında modeller görece stabil kalmıştır.
+
+**Unseen (drift):** Dağılım kayması (distribution drift) uygulandığında F1 değeri ~0.29–0.32'ye (Grid 2 GRU) düşmektedir.
+
+**En yüksek 5 run (Grid 2, original):** Tümü SKAB veri setine aittir — GRU/1D-CNN, F1 0.71–0.77 aralığında.
+
+---
+
+## BATADAL — Performans Analizi
+
+BATADAL veri setinde derin öğrenme modelleri **çoğunlukla majority-class collapse** sergilemiştir. Bu bulgu, veri seti karakteristiği ile model mimarisi arasındaki uyumsuzluğun nicel olarak ortaya konması açısından değerlendirilmelidir.
+
+### Düşük Performansın Olası Nedenleri
+
+1. **Belirgin sınıf dengesizliği:** Pozitif sınıf oranı ~%4 (pos_weight ≈ 23.3). Model, tüm örnekleri negatif sınıfa atayarak accuracy ≈ %90 elde edebilmekte; F1 skoru ise sıfıra inmektedir.
+2. **Accuracy metriğinin yanıltıcı etkisi:** Yüksek accuracy değerleri, dengesiz anomali tespiti problemlerinde tek başına yeterli değildir. F1, precision ve recall birlikte raporlanmalıdır.
+3. **ROC-AUC ile F1 arasındaki ayrışma:** Collapse gösteren run'larda ROC-AUC 0.73–0.98 iken F1=0 gözlenmektedir; model ayırım gücüne sahip olmakla birlikte varsayılan sınıflandırma eşiği (0.5) uygun değildir.
+4. **Seed kaynaklı instabilite:** Aynı protokol altında seed123 LSTM F1≈0.71–0.78 iken diğer dört seed F1≈0 değerindedir; sonuçların tekrarlanabilirliği sınırlıdır.
+5. **Veri seti–model uyumsuzluğu:** SKAB (GroupKFold, ~%35 pozitif) ile BATADAL (~%4 pozitif) farklı istatistiksel özellikler taşımaktadır; aynı mimari her iki veri setinde eşit düzeyde verimli değildir.
+
+### Temsilci Run Örnekleri
+
+| Örnek türü | Run | F1 | Acc | Recall | ROC-AUC | Yorum |
+| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
+| Accuracy yanılgısı | BATADAL LSTM seed42 (Grid 2) | 0.000 | 0.900 | 0.000 | 0.983 | Yüksek accuracy; anomali tahmini yapılmamaktadır |
+| En yüksek performans | BATADAL LSTM seed123 (Grid 1) | 0.780 | 0.962 | 0.688 | 0.989 | Tek seed'e bağlı aykırı değer; genellenebilirlik sınırlı |
+| Weighted BCE etkisi | BATADAL GRU seed42 | 0.407→0.041 | — | — | — | Grid 1'de kabul edilebilir F1; Grid 2'de belirgin düşüş |
+
+### BATADAL Bulgularının Özeti
+
+> SKAB veri setinde GRU tabanlı derin öğrenme modelleri F1≈0.62 düzeyinde tutarlı anomali tespiti sağlarken, BATADAL veri setinde aşırı sınıf dengesizliği (%4 pozitif) nedeniyle modeller çoğunlukla majority-class collapse sergilemiştir. Bu durum, black-box DL yaklaşımının veri seti karakteristiğine güçlü bağımlılığını göstermekte ve otomata tabanlı yorumlanabilir modellerle karşılaştırma için anlamlı bir zemin oluşturmaktadır.
+
+**Raporlama notu:** BATADAL Tablo 1 ortalamaları (0.01–0.16 aralığı) tek başına özet metrik olarak sunulmamalıdır; **en yüksek performanslı run (seed123), collapse analizi ve medyan F1=0** birlikte değerlendirilmelidir.
+
+---
+
+## Tablo 2 — Senaryo Analizi (Her İki Grid)
+
+Proje tanımında öngörülen Tablo 2 formatına uygun özet (`outputs/metrics/table2.md`, `table2_wbce.md`):
+
+### Gürültü Etkisi (Original / Gürültülü F1)
+
+| Model | Grid 1 SKAB | Grid 2 SKAB | Grid 1 BATADAL | Grid 2 BATADAL |
+| :--- | :--- | :--- | :--- | :--- |
+| LSTM | 0.463 / 0.453 | 0.474 / 0.467 | 0.156 / 0.163 | 0.152 / 0.152 |
+| GRU | 0.492 / 0.481 | 0.618 / 0.606 | 0.143 / 0.146 | 0.025 / 0.056 |
+| 1D-CNN | 0.577 / 0.548 | 0.576 / 0.557 | 0.065 / 0.069 | 0.012 / 0.013 |
+
+### Unseen Analizi (F1 ± std)
+
+| Model | Grid 1 SKAB | Grid 2 SKAB | Grid 1 BATADAL | Grid 2 BATADAL |
+| :--- | :--- | :--- | :--- | :--- |
+| LSTM | 0.270 ± 0.169 | 0.293 ± 0.141 | 0.189 ± 0.352 | 0.172 ± 0.203 |
+| GRU | 0.220 ± 0.220 | 0.321 ± 0.191 | 0.241 ± 0.173 | 0.170 ± 0.117 |
+| 1D-CNN | 0.235 ± 0.175 | 0.288 ± 0.179 | 0.027 ± 0.060 | 0.032 ± 0.022 |
+
+---
+
+## DL Deneylerinin Genel Değerlendirilmesi
+
+| Konu | Sonuç |
+| :--- | :--- |
+| Referans DL sonucu | **Grid 2 / SKAB / GRU** — F1≈0.62 ± 0.10 |
+| İki grid'in raporlanması | Grid 1: temel BCE deneyleri; Grid 2: sınıf dengesizliği müdahalesi |
+| BATADAL performansı | Majority-class collapse baskın; veri seti–model etkileşimi analiz edilmeli |
+| Otomata karşılaştırması | Tamamlanacak — DL tarafında Grid 2 referans alınacak |
+
+### Bulguların Yorumlanması
+
+| Desteklenen ifadeler | Kaçınılması gereken ifadeler |
+| :--- | :--- |
+| SKAB'da GRU F1=0.62±0.10, 5 seed üzerinde stabil | Weighted BCE'nin BATADAL performansını iyileştirdiği iddiası |
+| BATADAL'da majority-class collapse (%56 run) | Bağlam olmaksızın "başarısızlık" vurgusu |
+| Weighted BCE'nin SKAB GRU'da +12.6 puanlık F1 artışı | F1=0 iken yalnızca accuracy=%90 vurgusu |
+| Weighted BCE'nin BATADAL seed42/GRU'da performans düşüşü | — |
+| DL performansının veri seti karakteristiğine bağımlılığı | — |
+
+---
+
+## DL vs Otomata Karşılaştırması (Yer Tutucu)
+
+> Otomata pipeline sonuçları (SKAB / BATADAL, parametre analizi, unseen yönetimi) elde edildiğinde bu bölüm tamamlanacaktır. Planlanan karşılaştırma eksenleri:
+>
+> - SKAB: Grid 2 / GRU (F1≈0.62) ile otomata en iyi konfigürasyonunun performans karşılaştırması
+> - BATADAL: DL performans analizi ile otomata sonuçlarının yorumlanabilirlik ve stabilite açısından değerlendirilmesi
+> - Gürültü ve unseen senaryolarında iki paradigmanın davranış farklarının incelenmesi
 
 ---
 
@@ -446,6 +738,9 @@ Tamamlanan çalışmalar:
 - Deep Learning pipeline (LSTM, GRU, 1D-CNN)
 - DL senaryo deneyleri (original / noise / unseen)
 - DL otomatik tablo ve görsel üretimi
+- DL Grid 1 (baseline BCE) — 270 run tamamlandı
+- DL Grid 2 (weighted BCE) — 270 run tamamlandı
+- DL deney sonuçları ve analiz taslağı (README içinde)
 
 Devam eden çalışmalar:
 
