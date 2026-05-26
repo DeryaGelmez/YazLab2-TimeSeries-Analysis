@@ -177,6 +177,34 @@ def build_batadal_cache() -> BatadalDataCache:
     )
 
 
+def compute_train_pos_weight(
+    y_train: np.ndarray,
+    seq_len: int,
+    stride: int,
+    label_mode: LabelMode = "last",
+    max_weight: float = 25.0,
+) -> float:
+    if len(y_train) < seq_len:
+        return 1.0
+
+    labels: list[float] = []
+    for start in range(0, len(y_train) - seq_len + 1, stride):
+        window_y = y_train[start : start + seq_len]
+        if label_mode == "any":
+            labels.append(float(window_y.max() > 0))
+        else:
+            labels.append(float(window_y[-1]))
+
+    positive_rate = float(np.mean(labels))
+    if positive_rate <= 0.0:
+        return float(max_weight)
+    if positive_rate >= 1.0:
+        return 1.0
+
+    weight = (1.0 - positive_rate) / positive_rate
+    return float(min(max(weight, 1.0), max_weight))
+
+
 def _dataloader_kwargs() -> dict[str, object]:
     kwargs: dict[str, object] = {}
     if DL_NUM_WORKERS > 0:

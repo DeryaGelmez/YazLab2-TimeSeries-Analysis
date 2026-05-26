@@ -5,6 +5,7 @@ from deep_learning.data_loader import (
     BatadalDataCache,
     SkabDataCache,
     build_dataloaders,
+    compute_train_pos_weight,
     load_batadal_multivariate,
     load_skab_multivariate,
     make_skab_groupkfold_splits,
@@ -25,6 +26,7 @@ def run_single_experiment(
     skab_cache: SkabDataCache | None = None,
     batadal_cache: BatadalDataCache | None = None,
     save_plots: bool = True,
+    use_weighted_bce: bool = False,
 ) -> dict[str, Any]:
     seed_everything(seed)
     cfg.create_required_dirs()
@@ -82,11 +84,21 @@ def run_single_experiment(
         seed,
     )
 
+    suffix = cfg.DL_WEIGHTED_BCE_SUFFIX if use_weighted_bce else ""
     run_id = (
         f"{dataset_name}_{model_name}_{scenario}_seed{seed}_"
-        f"fold{fold if fold is not None else 'NA'}"
+        f"fold{fold if fold is not None else 'NA'}{suffix}"
     )
     run_dir = cfg.OUTPUTS_DIR / run_id
+
+    pos_weight_value: float | None = None
+    if use_weighted_bce:
+        pos_weight_value = compute_train_pos_weight(
+            y_tr,
+            cfg.DL_SEQUENCE_LENGTH,
+            cfg.DL_STRIDE,
+            max_weight=cfg.DL_POS_WEIGHT_MAX,
+        )
 
     print(f"Starting experiment: {run_id}")
     print(
@@ -94,6 +106,8 @@ def run_single_experiment(
         f"Val windows: {len(val_loader.dataset)}, "
         f"Test windows: {len(test_loader.dataset)}"
     )
+    if use_weighted_bce:
+        print(f"Using weighted BCE | pos_weight={pos_weight_value:.4f}")
 
     model = build_model(model_name, input_size=n_features)
     fit_result = fit(
@@ -106,6 +120,7 @@ def run_single_experiment(
         cfg.DL_DEVICE,
         seed,
         use_amp=cfg.DL_USE_AMP,
+        pos_weight=pos_weight_value,
     )
 
     history = fit_result["history"]
@@ -114,6 +129,8 @@ def run_single_experiment(
     model.load_state_dict(best_state_dict)
     y_true, y_prob, y_pred = predict(model, test_loader, cfg.DL_DEVICE)
     metrics = compute_metrics(y_true, y_pred, y_prob)
+    metrics["loss_type"] = "bce_weighted" if use_weighted_bce else "bce"
+    metrics["pos_weight"] = float(pos_weight_value if pos_weight_value is not None else 1.0)
 
     save_run_artifacts(
         run_dir,

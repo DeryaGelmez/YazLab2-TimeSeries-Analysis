@@ -110,6 +110,10 @@ DL_UNSEEN_DRIFT_MEAN = 0.3
 DL_UNSEEN_DRIFT_SCALE = 1.15
 DL_SKAB_N_FOLDS = 5
 
+# Grid 2: imbalance-aware BCE (pos_weight from train window positive rate)
+DL_WEIGHTED_BCE_SUFFIX = "_wbce"
+DL_POS_WEIGHT_MAX = 25.0
+
 
 def create_required_dirs():
     for directory in [

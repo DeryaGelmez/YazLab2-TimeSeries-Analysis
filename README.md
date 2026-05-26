@@ -310,6 +310,18 @@ python -m scripts.regenerate_figures --all
 
 Çıktı: `outputs/figures/<run_id>/` altında `loss.png`, `acc.png`, `cm.png`, `roc.png`, `pr.png`.
 
+## Grid 2: Weighted BCE (imbalance-aware)
+
+İkinci deney grid'i; protokol aynı (batch 32, seed'ler, split'ler), kayıp fonksiyonu train pencere pozitif oranından `pos_weight` alır.
+
+```bash
+python -m scripts.run_deep_learning --weighted-bce
+```
+
+- Run klasörleri: `outputs/<run_id>_wbce/` (baseline ile karışmaz)
+- Metrikler: `outputs/metrics/raw_results_wbce.csv`, `table1_wbce.md`, `table2_wbce.md`
+- `metrics.json` içinde `pos_weight` ve `loss_type` alanları
+
 Google Colab'de de aynı komutlar proje kök dizininden çalıştırılabilir.
 
 ## Performans (proje isterlerine uygun)

@@ -29,7 +29,7 @@ DATASET_LABELS = {
 
 
 def parse_run_id(run_id: str) -> dict[str, str | int]:
-    fold_match = re.search(r"_fold(?P<fold>NA|\d+)$", run_id)
+    fold_match = re.search(r"_fold(?P<fold>NA|\d+)(?:_wbce)?$", run_id)
     if fold_match is None:
         raise ValueError(f"Could not parse fold from run_id: {run_id}")
 
@@ -93,12 +93,23 @@ def collect_run_metrics(run_dirs: list[Path | str]) -> pd.DataFrame:
         row = {
             **run_meta,
             **{col: metrics.get(col, np.nan) for col in METRIC_COLUMNS},
+            "pos_weight": metrics.get("pos_weight", np.nan),
+            "loss_type": metrics.get("loss_type", ""),
         }
         rows.append(row)
 
     if not rows:
         return pd.DataFrame(
-            columns=["dataset", "model", "scenario", "seed", "fold", *METRIC_COLUMNS]
+            columns=[
+                "dataset",
+                "model",
+                "scenario",
+                "seed",
+                "fold",
+                *METRIC_COLUMNS,
+                "pos_weight",
+                "loss_type",
+            ]
         )
 
     df = pd.DataFrame(rows)

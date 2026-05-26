@@ -71,6 +71,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Skip per-run plot generation (metrics.json, history.json, model.pt still saved).",
     )
+    parser.add_argument(
+        "--weighted-bce",
+        action="store_true",
+        help="Grid 2: BCEWithLogitsLoss with pos_weight from train window positive rate.",
+    )
     return parser.parse_args()
 
 
@@ -102,6 +107,20 @@ def build_experiment_plan(args: argparse.Namespace) -> tuple[list[tuple], int]:
     return experiments, cfg.MAX_EPOCHS
 
 
+def _metrics_paths(weighted_bce: bool) -> tuple[Path, Path, Path]:
+    if weighted_bce:
+        return (
+            cfg.OUTPUTS_METRICS_DIR / "raw_results_wbce.csv",
+            cfg.OUTPUTS_METRICS_DIR / "table1_wbce.md",
+            cfg.OUTPUTS_METRICS_DIR / "table2_wbce.md",
+        )
+    return (
+        cfg.OUTPUTS_METRICS_DIR / "raw_results.csv",
+        cfg.OUTPUTS_METRICS_DIR / "table1.md",
+        cfg.OUTPUTS_METRICS_DIR / "table2.md",
+    )
+
+
 def main() -> None:
     args = parse_args()
     cfg.create_required_dirs()
@@ -110,6 +129,7 @@ def main() -> None:
     total = len(experiments)
     run_dirs: list[Path] = []
     save_plots = not args.fast
+    suffix = cfg.DL_WEIGHTED_BCE_SUFFIX if args.weighted_bce else ""
 
     skab_cache = None
     batadal_cache = None
@@ -132,13 +152,13 @@ def main() -> None:
         f"Starting deep learning pipeline | runs={total}, max_epochs={max_epochs}, "
         f"device={cfg.DL_DEVICE}, batch_size={cfg.BATCH_SIZE}, "
         f"num_workers={cfg.DL_NUM_WORKERS}, pin_memory={cfg.DL_PIN_MEMORY}, "
-        f"amp={cfg.DL_USE_AMP}, save_plots={save_plots}"
+        f"amp={cfg.DL_USE_AMP}, weighted_bce={args.weighted_bce}, save_plots={save_plots}"
     )
 
     for index, (model, dataset, scenario, seed, fold) in enumerate(experiments, start=1):
         run_id = (
             f"{dataset}_{model}_{scenario}_seed{seed}_"
-            f"fold{fold if fold is not None else 'NA'}"
+            f"fold{fold if fold is not None else 'NA'}{suffix}"
         )
         print(f"[{index}/{total}] {run_id}")
 
@@ -151,6 +171,7 @@ def main() -> None:
             skab_cache=skab_cache,
             batadal_cache=batadal_cache,
             save_plots=save_plots,
+            use_weighted_bce=args.weighted_bce,
         )
         run_dirs.append(Path(result["run_dir"]))
         print(f"[{index}/{total}] completed {run_id} | f1={result['f1']:.4f}")
@@ -158,11 +179,13 @@ def main() -> None:
     raw_df = collect_run_metrics(run_dirs)
     agg_df = aggregate_mean_std(raw_df)
 
-    export_raw_results(raw_df, cfg.OUTPUTS_METRICS_DIR / "raw_results.csv")
-    export_table_1(agg_df, cfg.OUTPUTS_METRICS_DIR / "table1.md")
-    export_table_2(agg_df, cfg.OUTPUTS_METRICS_DIR / "table2.md")
+    raw_path, table1_path, table2_path = _metrics_paths(args.weighted_bce)
+    export_raw_results(raw_df, raw_path)
+    export_table_1(agg_df, table1_path)
+    export_table_2(agg_df, table2_path)
 
     print(f"Saved report tables to {cfg.OUTPUTS_METRICS_DIR}")
+    print(f"  {raw_path.name}, {table1_path.name}, {table2_path.name}")
 
 
 if __name__ == "__main__":

@@ -161,6 +161,7 @@ def fit(
     device: torch.device | str,
     seed: int,
     use_amp: bool = False,
+    pos_weight: float | None = None,
 ) -> dict[str, object]:
     seed_everything(seed)
 
@@ -168,7 +169,11 @@ def fit(
         use_amp = False
 
     model = model.to(device)
-    criterion = nn.BCEWithLogitsLoss()
+    if pos_weight is not None and pos_weight != 1.0:
+        weight_tensor = torch.tensor([pos_weight], device=device)
+        criterion = nn.BCEWithLogitsLoss(pos_weight=weight_tensor)
+    else:
+        criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     early_stopping = EarlyStopping(patience=patience, mode="min")
 
