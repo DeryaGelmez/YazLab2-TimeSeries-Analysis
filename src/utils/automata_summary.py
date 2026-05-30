@@ -13,18 +13,49 @@ from config.config import (
 
 
 def get_best_parameter_result(csv_path, dataset_name):
+    """
+    Parametre analizi CSV'sinden en iyi kombinasyonu döndürür.
+    GroupKFold CSV'si varsa (mean±std sütunlu) onu tercih eder.
+    """
     df = pd.read_csv(csv_path)
+
+    # GroupKFold CSV formatı: f1_score_mean, f1_score_std sütunları
+    if "f1_score_mean" in df.columns:
+        best_row = df.sort_values(by="f1_score_mean", ascending=False).iloc[0]
+        return {
+            "dataset": dataset_name,
+            "evaluation": "GroupKFold",
+            "best_window_size": best_row["window_size"],
+            "best_alphabet_size": best_row["alphabet_size"],
+            "best_state_count": best_row.get("state_count_mean", None),
+            "best_transition_density": best_row.get("transition_density_mean", None),
+            "best_accuracy": best_row["accuracy_mean"],
+            "best_accuracy_std": best_row.get("accuracy_std", 0),
+            "best_precision": best_row["precision_mean"],
+            "best_precision_std": best_row.get("precision_std", 0),
+            "best_recall": best_row["recall_mean"],
+            "best_recall_std": best_row.get("recall_std", 0),
+            "best_f1_score": best_row["f1_score_mean"],
+            "best_f1_score_std": best_row.get("f1_score_std", 0),
+        }
+
+    # Klasik (single-run) format
     best_row = df.sort_values(by="f1_score", ascending=False).iloc[0]
     return {
         "dataset": dataset_name,
+        "evaluation": "single_fold",
         "best_window_size": best_row["window_size"],
         "best_alphabet_size": best_row["alphabet_size"],
-        "best_state_count": best_row["state_count"],
-        "best_transition_density": best_row["transition_density"],
+        "best_state_count": best_row.get("state_count", None),
+        "best_transition_density": best_row.get("transition_density", None),
         "best_accuracy": best_row["accuracy"],
+        "best_accuracy_std": 0,
         "best_precision": best_row["precision"],
+        "best_precision_std": 0,
         "best_recall": best_row["recall"],
-        "best_f1_score": best_row["f1_score"]
+        "best_recall_std": 0,
+        "best_f1_score": best_row["f1_score"],
+        "best_f1_score_std": 0,
     }
 
 
@@ -161,10 +192,12 @@ def build_scenario_comparison_table():
 def main():
     print("Automata özet tabloları oluşturuluyor...")
 
-    # Best parameter summary
+    # Best parameter summary — SKAB için GKF CSV'si öncelikli
     best_records = []
-    for dataset, fname in [("SKAB", "skab_automata_parameter_analysis.csv"),
-                            ("BATADAL", "batadal_automata_parameter_analysis.csv")]:
+    for dataset, fname in [
+        ("SKAB", "skab_automata_parameter_analysis_gkf.csv"),
+        ("BATADAL", "batadal_automata_parameter_analysis.csv"),
+    ]:
         path = METRICS_DIR / fname
         if path.exists():
             best_records.append(get_best_parameter_result(path, dataset))
