@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 
 from config.config import (
@@ -101,11 +102,13 @@ def predict_with_automata(
         mapped_patterns.append({
             "time_step": i,
             "state": current_pattern,
+            "pattern": current_pattern,
             "mapped_state": mapped_current,
             "next_pattern": next_pattern,
             "mapped_next_pattern": mapped_next,
             "status": status,
             "probability": probability,
+            "confidence_score": probability,
             "decision": "anomaly" if prediction == 1 else "normal"
         })
 
@@ -252,12 +255,29 @@ def main():
         encoding="utf-8"
     )
 
-    print("\nAçıklanabilirlik çıktıları kaydedildi:")
-    print(explanation_output_path)
+    json_output_path = LOGS_DIR / "batadal_automata_explanations.json"
+    json_records = []
+    for exp in explanations:
+        json_records.append({
+            "time_step": exp["time_step"],
+            "state": exp["state"],
+            "pattern": exp["pattern"],
+            "status": exp["status"],
+            "mapped_to": exp["mapped_state"] if exp["status"] == "unseen" else None,
+            "probability": exp["probability"],
+            "confidence_score": exp["confidence_score"],
+            "decision": exp["decision"]
+        })
+    with open(json_output_path, "w", encoding="utf-8") as f:
+        json.dump(json_records, f, indent=2, ensure_ascii=False)
 
-    print("\nİlk 5 açıklama örneği:")
-    for item in explanations[:5]:
-        print(item)
+    print("\nAçıklanabilirlik çıktıları kaydedildi:")
+    print(f"  CSV: {explanation_output_path}")
+    print(f"  JSON: {json_output_path}")
+
+    print("\nİlk 5 açıklama örneği (JSON formatı):")
+    for item in json_records[:5]:
+        print(json.dumps(item, indent=2))
 
     print("\nBATADAL Automata Pipeline Tamamlandı")
 
