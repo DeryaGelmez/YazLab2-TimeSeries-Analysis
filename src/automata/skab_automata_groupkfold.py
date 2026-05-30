@@ -47,17 +47,25 @@ def prepare_pc1(values, window_size, alphabet_size):
 
 
 def predict(test_patterns, train_states, transition_probs, threshold):
+    """3-state path probability: P(prev→cur) × P(cur→next). Döndürür (predictions, scores)."""
     predictions = []
-    for i in range(len(test_patterns) - 1):
+    scores = []
+    for i in range(1, len(test_patterns) - 1):
+        prev = test_patterns[i - 1]
         cur = test_patterns[i]
         nxt = test_patterns[i + 1]
+        if prev not in train_states:
+            prev, _ = find_nearest_pattern(prev, list(train_states))
         if cur not in train_states:
             cur, _ = find_nearest_pattern(cur, list(train_states))
         if nxt not in train_states:
             nxt, _ = find_nearest_pattern(nxt, list(train_states))
-        prob = calculate_path_probability([cur, nxt], transition_probs)
+        p_prev_cur = transition_probs.get(prev, {}).get(cur, 0.0)
+        p_cur_nxt = transition_probs.get(cur, {}).get(nxt, 0.0)
+        prob = p_prev_cur * p_cur_nxt
         predictions.append(1 if prob < threshold else 0)
-    return predictions
+        scores.append(prob)
+    return predictions, scores
 
 
 def run_groupkfold(
@@ -99,8 +107,8 @@ def run_groupkfold(
         probs = calculate_transition_probabilities(counts)
         density = calculate_transition_density(counts, train_states)
 
-        y_pred = predict(test_patterns, train_states, probs, threshold)
-        y_true = y_test[:len(y_pred)]
+        y_pred, _ = predict(test_patterns, train_states, probs, threshold)
+        y_true = y_test[1:1 + len(y_pred)]
 
         metrics = calculate_classification_metrics(y_true, y_pred)
 

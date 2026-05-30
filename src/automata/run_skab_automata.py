@@ -26,7 +26,9 @@ from src.utils.logger import log_experiment_result
 from src.utils.plotting import (
     plot_confusion_matrix,
     plot_transition_heatmap,
-    plot_state_diagram
+    plot_state_diagram,
+    plot_roc_curve,
+    plot_pr_curve,
 )
 
 
@@ -59,59 +61,73 @@ def predict_with_automata(
     transition_probabilities,
     threshold
 ):
+    """
+    PDF örneğiyle uyumlu 3-state path probability hesabı:
+      P(prev → mapped_cur) × P(mapped_cur → mapped_next)
 
+    Döndürür: (predictions, explanations)
+      - predictions[j] ↔ test_patterns[j+1] (i=1'den başlar)
+      - explanations[j]: her adıma ait tam açıklama sözlüğü
+    """
     predictions = []
-    mapped_patterns = []
+    explanations = []
 
-    for i in range(len(test_patterns) - 1):
+    # i=1'den başlarız: prev=i-1, current=i, next=i+1
+    for i in range(1, len(test_patterns) - 1):
 
+        prev_pattern = test_patterns[i - 1]
         current_pattern = test_patterns[i]
         next_pattern = test_patterns[i + 1]
 
         status = "seen"
+        mapped_prev = prev_pattern
         mapped_current = current_pattern
         mapped_next = next_pattern
 
+        if prev_pattern not in train_states:
+            mapped_prev, _ = find_nearest_pattern(prev_pattern, train_states)
+            status = "unseen"
+
         if current_pattern not in train_states:
-            mapped_current, _ = find_nearest_pattern(
-                current_pattern,
-                train_states
-            )
+            mapped_current, _ = find_nearest_pattern(current_pattern, train_states)
             status = "unseen"
 
         if next_pattern not in train_states:
-            mapped_next, _ = find_nearest_pattern(
-                next_pattern,
-                train_states
-            )
+            mapped_next, _ = find_nearest_pattern(next_pattern, train_states)
             status = "unseen"
 
-        probability = calculate_path_probability(
-            [mapped_current, mapped_next],
-            transition_probabilities
+        # Bireysel geçiş olasılıkları
+        prob_prev_cur = (
+            transition_probabilities.get(mapped_prev, {}).get(mapped_current, 0.0)
         )
+        prob_cur_next = (
+            transition_probabilities.get(mapped_current, {}).get(mapped_next, 0.0)
+        )
+        # 3-state path probability = P(prev→cur) × P(cur→next)
+        probability = prob_prev_cur * prob_cur_next
 
-        if probability < threshold:
-            prediction = 1
-        else:
-            prediction = 0
-
+        prediction = 1 if probability < threshold else 0
         predictions.append(prediction)
 
-        mapped_patterns.append({
+        explanations.append({
             "time_step": i,
-            "state": current_pattern,
+            "state": prev_pattern,
             "pattern": current_pattern,
-            "mapped_state": mapped_current,
-            "next_pattern": next_pattern,
-            "mapped_next_pattern": mapped_next,
+            "mapped_prev": mapped_prev,
+            "mapped_current": mapped_current,
+            "mapped_next": mapped_next,
             "status": status,
+            "mapped_to": mapped_current if status == "unseen" else None,
+            "transition_prev_cur": f"{mapped_prev} -> {mapped_current}",
+            "prob_prev_cur": prob_prev_cur,
+            "transition_cur_next": f"{mapped_current} -> {mapped_next}",
+            "prob_cur_next": prob_cur_next,
             "probability": probability,
             "confidence_score": probability,
-            "decision": "anomaly" if prediction == 1 else "normal"
+            "decision": "anomaly" if prediction == 1 else "normal",
         })
 
-    return predictions, mapped_patterns
+    return predictions, explanations
 
 
 def main():
@@ -182,7 +198,8 @@ def main():
         threshold=AUTOMATA_PROBABILITY_THRESHOLD
     )
 
-    y_test = y_test_original[:len(y_pred)]
+    # i=1'den başladığı için label hizalaması [1:1+n]
+    y_test = y_test_original[1:1 + len(y_pred)]
 
     metrics = calculate_classification_metrics(
         y_test,
@@ -201,6 +218,26 @@ def main():
 
     print("\nConfusion matrix görseli kaydedildi.")
 
+    # ROC ve PR eğrisi: anomali skoru = 1 - path_probability
+    y_scores = [1.0 - exp["probability"] for exp in explanations]
+
+    roc_auc = plot_roc_curve(
+        y_true=y_test,
+        y_scores=y_scores,
+        save_path=FIGURES_DIR / "skab_automata_roc_curve.png",
+        title="SKAB Automata ROC Curve"
+    )
+
+    ap = plot_pr_curve(
+        y_true=y_test,
+        y_scores=y_scores,
+        save_path=FIGURES_DIR / "skab_automata_pr_curve.png",
+        title="SKAB Automata Precision-Recall Curve"
+    )
+
+    print(f"\nROC AUC: {roc_auc:.4f}  |  Average Precision: {ap:.4f}")
+    print("ROC ve PR eğrileri kaydedildi.")
+
     log_experiment_result(
         LOGS_DIR / "automata_skab_results.csv",
         {
@@ -214,7 +251,9 @@ def main():
             "accuracy": metrics["accuracy"],
             "precision": metrics["precision"],
             "recall": metrics["recall"],
-            "f1_score": metrics["f1_score"]
+            "f1_score": metrics["f1_score"],
+            "roc_auc": roc_auc,
+            "average_precision": ap,
         }
     )
 
@@ -233,12 +272,18 @@ def main():
     for exp in explanations:
         json_records.append({
             "time_step": exp["time_step"],
-            "state": exp["state"],
-            "pattern": exp["pattern"],
+            "state": exp["state"],           # previous state (PDF örneği: "aab")
+            "pattern": exp["pattern"],        # incoming pattern (PDF örneği: "adc")
             "status": exp["status"],
-            "mapped_to": exp["mapped_state"] if exp["status"] == "unseen" else None,
-            "probability": exp["probability"],
-            "confidence_score": exp["confidence_score"],
+            "mapped_to": exp["mapped_to"],    # unseen ise nearest known
+            "transitions": [
+                {"transition": exp["transition_prev_cur"],
+                 "probability": round(exp["prob_prev_cur"], 6)},
+                {"transition": exp["transition_cur_next"],
+                 "probability": round(exp["prob_cur_next"], 6)},
+            ],
+            "probability": round(exp["probability"], 6),
+            "confidence_score": round(exp["confidence_score"], 6),
             "decision": exp["decision"]
         })
     with open(json_output_path, "w", encoding="utf-8") as f:

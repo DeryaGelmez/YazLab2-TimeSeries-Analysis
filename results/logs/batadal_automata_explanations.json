@@ -1,0 +1,4082 @@
+[
+  {
+    "time_step": 1,
+    "state": "cbac",
+    "pattern": "baca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbac -> baca",
+        "probability": 0.1
+      },
+      {
+        "transition": "baca -> acac",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 2,
+    "state": "baca",
+    "pattern": "acac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "baca -> acac",
+        "probability": 0.0
+      },
+      {
+        "transition": "acac -> cacc",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 3,
+    "state": "acac",
+    "pattern": "cacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acac -> cacc",
+        "probability": 1.0
+      },
+      {
+        "transition": "cacc -> acca",
+        "probability": 0.783784
+      }
+    ],
+    "probability": 0.783784,
+    "confidence_score": 0.783784,
+    "decision": "normal"
+  },
+  {
+    "time_step": 4,
+    "state": "cacc",
+    "pattern": "acca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cacc -> acca",
+        "probability": 0.783784
+      },
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      }
+    ],
+    "probability": 0.419884,
+    "confidence_score": 0.419884,
+    "decision": "normal"
+  },
+  {
+    "time_step": 5,
+    "state": "acca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      },
+      {
+        "transition": "ccaa -> caab",
+        "probability": 0.162791
+      }
+    ],
+    "probability": 0.087209,
+    "confidence_score": 0.087209,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 6,
+    "state": "ccaa",
+    "pattern": "caab",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caab",
+        "probability": 0.162791
+      },
+      {
+        "transition": "caab -> aabc",
+        "probability": 0.1
+      }
+    ],
+    "probability": 0.016279,
+    "confidence_score": 0.016279,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 7,
+    "state": "caab",
+    "pattern": "aabc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caab -> aabc",
+        "probability": 0.1
+      },
+      {
+        "transition": "aabc -> abcc",
+        "probability": 0.75
+      }
+    ],
+    "probability": 0.075,
+    "confidence_score": 0.075,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 8,
+    "state": "aabc",
+    "pattern": "abcc",
+    "status": "unseen",
+    "mapped_to": "abcc",
+    "transitions": [
+      {
+        "transition": "aabc -> abcc",
+        "probability": 0.75
+      },
+      {
+        "transition": "abcc -> bcac",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 9,
+    "state": "abcc",
+    "pattern": "bccc",
+    "status": "unseen",
+    "mapped_to": "bcac",
+    "transitions": [
+      {
+        "transition": "abcc -> bcac",
+        "probability": 0.0
+      },
+      {
+        "transition": "bcac -> ccca",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 10,
+    "state": "bccc",
+    "pattern": "ccca",
+    "status": "unseen",
+    "mapped_to": "ccca",
+    "transitions": [
+      {
+        "transition": "bcac -> ccca",
+        "probability": 0.0
+      },
+      {
+        "transition": "ccca -> ccaa",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 11,
+    "state": "ccca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccca -> ccaa",
+        "probability": 0.5
+      },
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      }
+    ],
+    "probability": 0.302326,
+    "confidence_score": 0.302326,
+    "decision": "normal"
+  },
+  {
+    "time_step": 12,
+    "state": "ccaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      },
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      }
+    ],
+    "probability": 0.521251,
+    "confidence_score": 0.521251,
+    "decision": "normal"
+  },
+  {
+    "time_step": 13,
+    "state": "caaa",
+    "pattern": "aaaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      },
+      {
+        "transition": "aaaa -> aaab",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 14,
+    "state": "aaaa",
+    "pattern": "aaab",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaaa -> aaab",
+        "probability": 0.0
+      },
+      {
+        "transition": "aaab -> aabc",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 15,
+    "state": "aaab",
+    "pattern": "aabc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaab -> aabc",
+        "probability": 0.5
+      },
+      {
+        "transition": "aabc -> abcc",
+        "probability": 0.75
+      }
+    ],
+    "probability": 0.375,
+    "confidence_score": 0.375,
+    "decision": "normal"
+  },
+  {
+    "time_step": 16,
+    "state": "aabc",
+    "pattern": "abcc",
+    "status": "unseen",
+    "mapped_to": "abcc",
+    "transitions": [
+      {
+        "transition": "aabc -> abcc",
+        "probability": 0.75
+      },
+      {
+        "transition": "abcc -> bcac",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 17,
+    "state": "abcc",
+    "pattern": "bccc",
+    "status": "unseen",
+    "mapped_to": "bcac",
+    "transitions": [
+      {
+        "transition": "abcc -> bcac",
+        "probability": 0.0
+      },
+      {
+        "transition": "bcac -> cccc",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 18,
+    "state": "bccc",
+    "pattern": "cccc",
+    "status": "unseen",
+    "mapped_to": "cccc",
+    "transitions": [
+      {
+        "transition": "bcac -> cccc",
+        "probability": 0.0
+      },
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 19,
+    "state": "cccc",
+    "pattern": "ccca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      },
+      {
+        "transition": "ccca -> ccac",
+        "probability": 0.3
+      }
+    ],
+    "probability": 0.2,
+    "confidence_score": 0.2,
+    "decision": "normal"
+  },
+  {
+    "time_step": 20,
+    "state": "ccca",
+    "pattern": "ccac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccca -> ccac",
+        "probability": 0.3
+      },
+      {
+        "transition": "ccac -> cacc",
+        "probability": 0.769231
+      }
+    ],
+    "probability": 0.230769,
+    "confidence_score": 0.230769,
+    "decision": "normal"
+  },
+  {
+    "time_step": 21,
+    "state": "ccac",
+    "pattern": "cacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccac -> cacc",
+        "probability": 0.769231
+      },
+      {
+        "transition": "cacc -> accc",
+        "probability": 0.081081
+      }
+    ],
+    "probability": 0.06237,
+    "confidence_score": 0.06237,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 22,
+    "state": "cacc",
+    "pattern": "accc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cacc -> accc",
+        "probability": 0.081081
+      },
+      {
+        "transition": "accc -> cccc",
+        "probability": 0.833333
+      }
+    ],
+    "probability": 0.067568,
+    "confidence_score": 0.067568,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 23,
+    "state": "accc",
+    "pattern": "cccc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "accc -> cccc",
+        "probability": 0.833333
+      },
+      {
+        "transition": "cccc -> cccb",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 24,
+    "state": "cccc",
+    "pattern": "cccb",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccc -> cccb",
+        "probability": 0.0
+      },
+      {
+        "transition": "cccb -> ccba",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 25,
+    "state": "cccb",
+    "pattern": "ccba",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccb -> ccba",
+        "probability": 0.0
+      },
+      {
+        "transition": "ccba -> cbaa",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 26,
+    "state": "ccba",
+    "pattern": "cbaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccba -> cbaa",
+        "probability": 1.0
+      },
+      {
+        "transition": "cbaa -> baac",
+        "probability": 0.2
+      }
+    ],
+    "probability": 0.2,
+    "confidence_score": 0.2,
+    "decision": "normal"
+  },
+  {
+    "time_step": 27,
+    "state": "cbaa",
+    "pattern": "baac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbaa -> baac",
+        "probability": 0.2
+      },
+      {
+        "transition": "baac -> aaca",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.1,
+    "confidence_score": 0.1,
+    "decision": "normal"
+  },
+  {
+    "time_step": 28,
+    "state": "baac",
+    "pattern": "aaca",
+    "status": "unseen",
+    "mapped_to": "aaca",
+    "transitions": [
+      {
+        "transition": "baac -> aaca",
+        "probability": 0.5
+      },
+      {
+        "transition": "aaca -> bcab",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 29,
+    "state": "aaca",
+    "pattern": "acab",
+    "status": "unseen",
+    "mapped_to": "bcab",
+    "transitions": [
+      {
+        "transition": "aaca -> bcab",
+        "probability": 0.0
+      },
+      {
+        "transition": "bcab -> cabc",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 30,
+    "state": "acab",
+    "pattern": "cabc",
+    "status": "unseen",
+    "mapped_to": "cabc",
+    "transitions": [
+      {
+        "transition": "bcab -> cabc",
+        "probability": 1.0
+      },
+      {
+        "transition": "cabc -> abcb",
+        "probability": 0.222222
+      }
+    ],
+    "probability": 0.222222,
+    "confidence_score": 0.222222,
+    "decision": "normal"
+  },
+  {
+    "time_step": 31,
+    "state": "cabc",
+    "pattern": "abcb",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cabc -> abcb",
+        "probability": 0.222222
+      },
+      {
+        "transition": "abcb -> bcbc",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.222222,
+    "confidence_score": 0.222222,
+    "decision": "normal"
+  },
+  {
+    "time_step": 32,
+    "state": "abcb",
+    "pattern": "bcbc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "abcb -> bcbc",
+        "probability": 1.0
+      },
+      {
+        "transition": "bcbc -> cbcc",
+        "probability": 0.333333
+      }
+    ],
+    "probability": 0.333333,
+    "confidence_score": 0.333333,
+    "decision": "normal"
+  },
+  {
+    "time_step": 33,
+    "state": "bcbc",
+    "pattern": "cbcc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bcbc -> cbcc",
+        "probability": 0.333333
+      },
+      {
+        "transition": "cbcc -> bcca",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.333333,
+    "confidence_score": 0.333333,
+    "decision": "normal"
+  },
+  {
+    "time_step": 34,
+    "state": "cbcc",
+    "pattern": "bcca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbcc -> bcca",
+        "probability": 1.0
+      },
+      {
+        "transition": "bcca -> ccab",
+        "probability": 0.083333
+      }
+    ],
+    "probability": 0.083333,
+    "confidence_score": 0.083333,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 35,
+    "state": "bcca",
+    "pattern": "ccab",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bcca -> ccab",
+        "probability": 0.083333
+      },
+      {
+        "transition": "ccab -> cabc",
+        "probability": 0.888889
+      }
+    ],
+    "probability": 0.074074,
+    "confidence_score": 0.074074,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 36,
+    "state": "ccab",
+    "pattern": "cabc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccab -> cabc",
+        "probability": 0.888889
+      },
+      {
+        "transition": "cabc -> abca",
+        "probability": 0.777778
+      }
+    ],
+    "probability": 0.691358,
+    "confidence_score": 0.691358,
+    "decision": "normal"
+  },
+  {
+    "time_step": 37,
+    "state": "cabc",
+    "pattern": "abca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cabc -> abca",
+        "probability": 0.777778
+      },
+      {
+        "transition": "abca -> bcac",
+        "probability": 0.75
+      }
+    ],
+    "probability": 0.583333,
+    "confidence_score": 0.583333,
+    "decision": "normal"
+  },
+  {
+    "time_step": 38,
+    "state": "abca",
+    "pattern": "bcac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "abca -> bcac",
+        "probability": 0.75
+      },
+      {
+        "transition": "bcac -> cacc",
+        "probability": 0.777778
+      }
+    ],
+    "probability": 0.583333,
+    "confidence_score": 0.583333,
+    "decision": "normal"
+  },
+  {
+    "time_step": 39,
+    "state": "bcac",
+    "pattern": "cacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bcac -> cacc",
+        "probability": 0.777778
+      },
+      {
+        "transition": "cacc -> acca",
+        "probability": 0.783784
+      }
+    ],
+    "probability": 0.60961,
+    "confidence_score": 0.60961,
+    "decision": "normal"
+  },
+  {
+    "time_step": 40,
+    "state": "cacc",
+    "pattern": "acca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cacc -> acca",
+        "probability": 0.783784
+      },
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      }
+    ],
+    "probability": 0.419884,
+    "confidence_score": 0.419884,
+    "decision": "normal"
+  },
+  {
+    "time_step": 41,
+    "state": "acca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      },
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      }
+    ],
+    "probability": 0.32392,
+    "confidence_score": 0.32392,
+    "decision": "normal"
+  },
+  {
+    "time_step": 42,
+    "state": "ccaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      },
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      }
+    ],
+    "probability": 0.521251,
+    "confidence_score": 0.521251,
+    "decision": "normal"
+  },
+  {
+    "time_step": 43,
+    "state": "caaa",
+    "pattern": "aaaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      },
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.832342,
+    "confidence_score": 0.832342,
+    "decision": "normal"
+  },
+  {
+    "time_step": 44,
+    "state": "aaaa",
+    "pattern": "aaac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.932224,
+    "confidence_score": 0.932224,
+    "decision": "normal"
+  },
+  {
+    "time_step": 45,
+    "state": "aaac",
+    "pattern": "aacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aacc -> accb",
+        "probability": 0.285714
+      }
+    ],
+    "probability": 0.275862,
+    "confidence_score": 0.275862,
+    "decision": "normal"
+  },
+  {
+    "time_step": 46,
+    "state": "aacc",
+    "pattern": "accb",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aacc -> accb",
+        "probability": 0.285714
+      },
+      {
+        "transition": "accb -> ccbc",
+        "probability": 0.894737
+      }
+    ],
+    "probability": 0.255639,
+    "confidence_score": 0.255639,
+    "decision": "normal"
+  },
+  {
+    "time_step": 47,
+    "state": "accb",
+    "pattern": "ccbc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "accb -> ccbc",
+        "probability": 0.894737
+      },
+      {
+        "transition": "ccbc -> cbca",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.447368,
+    "confidence_score": 0.447368,
+    "decision": "normal"
+  },
+  {
+    "time_step": 48,
+    "state": "ccbc",
+    "pattern": "cbca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccbc -> cbca",
+        "probability": 0.5
+      },
+      {
+        "transition": "cbca -> bcaa",
+        "probability": 0.909091
+      }
+    ],
+    "probability": 0.454545,
+    "confidence_score": 0.454545,
+    "decision": "normal"
+  },
+  {
+    "time_step": 49,
+    "state": "cbca",
+    "pattern": "bcaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbca -> bcaa",
+        "probability": 0.909091
+      },
+      {
+        "transition": "bcaa -> caab",
+        "probability": 0.166667
+      }
+    ],
+    "probability": 0.151515,
+    "confidence_score": 0.151515,
+    "decision": "normal"
+  },
+  {
+    "time_step": 50,
+    "state": "bcaa",
+    "pattern": "caab",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bcaa -> caab",
+        "probability": 0.166667
+      },
+      {
+        "transition": "caab -> aabc",
+        "probability": 0.1
+      }
+    ],
+    "probability": 0.016667,
+    "confidence_score": 0.016667,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 51,
+    "state": "caab",
+    "pattern": "aabc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caab -> aabc",
+        "probability": 0.1
+      },
+      {
+        "transition": "aabc -> abcc",
+        "probability": 0.75
+      }
+    ],
+    "probability": 0.075,
+    "confidence_score": 0.075,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 52,
+    "state": "aabc",
+    "pattern": "abcc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aabc -> abcc",
+        "probability": 0.75
+      },
+      {
+        "transition": "abcc -> bcca",
+        "probability": 0.666667
+      }
+    ],
+    "probability": 0.5,
+    "confidence_score": 0.5,
+    "decision": "normal"
+  },
+  {
+    "time_step": 53,
+    "state": "abcc",
+    "pattern": "bcca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "abcc -> bcca",
+        "probability": 0.666667
+      },
+      {
+        "transition": "bcca -> ccaa",
+        "probability": 0.666667
+      }
+    ],
+    "probability": 0.444444,
+    "confidence_score": 0.444444,
+    "decision": "normal"
+  },
+  {
+    "time_step": 54,
+    "state": "bcca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bcca -> ccaa",
+        "probability": 0.666667
+      },
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      }
+    ],
+    "probability": 0.403101,
+    "confidence_score": 0.403101,
+    "decision": "normal"
+  },
+  {
+    "time_step": 55,
+    "state": "ccaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      },
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      }
+    ],
+    "probability": 0.521251,
+    "confidence_score": 0.521251,
+    "decision": "normal"
+  },
+  {
+    "time_step": 56,
+    "state": "caaa",
+    "pattern": "aaaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      },
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.832342,
+    "confidence_score": 0.832342,
+    "decision": "normal"
+  },
+  {
+    "time_step": 57,
+    "state": "aaaa",
+    "pattern": "aaac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aaac -> aacb",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 58,
+    "state": "aaac",
+    "pattern": "aacb",
+    "status": "unseen",
+    "mapped_to": "aacb",
+    "transitions": [
+      {
+        "transition": "aaac -> aacb",
+        "probability": 0.0
+      },
+      {
+        "transition": "aacb -> bcbc",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 59,
+    "state": "aacb",
+    "pattern": "acbc",
+    "status": "unseen",
+    "mapped_to": "bcbc",
+    "transitions": [
+      {
+        "transition": "aacb -> bcbc",
+        "probability": 0.0
+      },
+      {
+        "transition": "bcbc -> cbcc",
+        "probability": 0.333333
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 60,
+    "state": "acbc",
+    "pattern": "cbcc",
+    "status": "unseen",
+    "mapped_to": "cbcc",
+    "transitions": [
+      {
+        "transition": "bcbc -> cbcc",
+        "probability": 0.333333
+      },
+      {
+        "transition": "cbcc -> bcac",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 61,
+    "state": "cbcc",
+    "pattern": "bccc",
+    "status": "unseen",
+    "mapped_to": "bcac",
+    "transitions": [
+      {
+        "transition": "cbcc -> bcac",
+        "probability": 0.0
+      },
+      {
+        "transition": "bcac -> cccc",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 62,
+    "state": "bccc",
+    "pattern": "cccc",
+    "status": "unseen",
+    "mapped_to": "cccc",
+    "transitions": [
+      {
+        "transition": "bcac -> cccc",
+        "probability": 0.0
+      },
+      {
+        "transition": "cccc -> cccc",
+        "probability": 0.333333
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 63,
+    "state": "cccc",
+    "pattern": "cccc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccc -> cccc",
+        "probability": 0.333333
+      },
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      }
+    ],
+    "probability": 0.222222,
+    "confidence_score": 0.222222,
+    "decision": "normal"
+  },
+  {
+    "time_step": 64,
+    "state": "cccc",
+    "pattern": "ccca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      },
+      {
+        "transition": "ccca -> ccaa",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.333333,
+    "confidence_score": 0.333333,
+    "decision": "normal"
+  },
+  {
+    "time_step": 65,
+    "state": "ccca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccca -> ccaa",
+        "probability": 0.5
+      },
+      {
+        "transition": "ccaa -> caab",
+        "probability": 0.162791
+      }
+    ],
+    "probability": 0.081395,
+    "confidence_score": 0.081395,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 66,
+    "state": "ccaa",
+    "pattern": "caab",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caab",
+        "probability": 0.162791
+      },
+      {
+        "transition": "caab -> aaba",
+        "probability": 0.8
+      }
+    ],
+    "probability": 0.130233,
+    "confidence_score": 0.130233,
+    "decision": "normal"
+  },
+  {
+    "time_step": 67,
+    "state": "caab",
+    "pattern": "aaba",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caab -> aaba",
+        "probability": 0.8
+      },
+      {
+        "transition": "aaba -> abab",
+        "probability": 0.111111
+      }
+    ],
+    "probability": 0.088889,
+    "confidence_score": 0.088889,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 68,
+    "state": "aaba",
+    "pattern": "abab",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaba -> abab",
+        "probability": 0.111111
+      },
+      {
+        "transition": "abab -> babc",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 69,
+    "state": "abab",
+    "pattern": "babc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "abab -> babc",
+        "probability": 0.0
+      },
+      {
+        "transition": "babc -> abcc",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 70,
+    "state": "babc",
+    "pattern": "abcc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "babc -> abcc",
+        "probability": 0.0
+      },
+      {
+        "transition": "abcc -> bccb",
+        "probability": 0.333333
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 71,
+    "state": "abcc",
+    "pattern": "bccb",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "abcc -> bccb",
+        "probability": 0.333333
+      },
+      {
+        "transition": "bccb -> ccbc",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.333333,
+    "confidence_score": 0.333333,
+    "decision": "normal"
+  },
+  {
+    "time_step": 72,
+    "state": "bccb",
+    "pattern": "ccbc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bccb -> ccbc",
+        "probability": 1.0
+      },
+      {
+        "transition": "ccbc -> cbca",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.5,
+    "confidence_score": 0.5,
+    "decision": "normal"
+  },
+  {
+    "time_step": 73,
+    "state": "ccbc",
+    "pattern": "cbca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccbc -> cbca",
+        "probability": 0.5
+      },
+      {
+        "transition": "cbca -> bcac",
+        "probability": 0.090909
+      }
+    ],
+    "probability": 0.045455,
+    "confidence_score": 0.045455,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 74,
+    "state": "cbca",
+    "pattern": "bcac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbca -> bcac",
+        "probability": 0.090909
+      },
+      {
+        "transition": "bcac -> cacb",
+        "probability": 0.222222
+      }
+    ],
+    "probability": 0.020202,
+    "confidence_score": 0.020202,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 75,
+    "state": "bcac",
+    "pattern": "cacb",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bcac -> cacb",
+        "probability": 0.222222
+      },
+      {
+        "transition": "cacb -> acba",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.222222,
+    "confidence_score": 0.222222,
+    "decision": "normal"
+  },
+  {
+    "time_step": 76,
+    "state": "cacb",
+    "pattern": "acba",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cacb -> acba",
+        "probability": 1.0
+      },
+      {
+        "transition": "acba -> cbaa",
+        "probability": 0.272727
+      }
+    ],
+    "probability": 0.272727,
+    "confidence_score": 0.272727,
+    "decision": "normal"
+  },
+  {
+    "time_step": 77,
+    "state": "acba",
+    "pattern": "cbaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acba -> cbaa",
+        "probability": 0.272727
+      },
+      {
+        "transition": "cbaa -> baac",
+        "probability": 0.2
+      }
+    ],
+    "probability": 0.054545,
+    "confidence_score": 0.054545,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 78,
+    "state": "cbaa",
+    "pattern": "baac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbaa -> baac",
+        "probability": 0.2
+      },
+      {
+        "transition": "baac -> aacc",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 79,
+    "state": "baac",
+    "pattern": "aacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "baac -> aacc",
+        "probability": 0.0
+      },
+      {
+        "transition": "aacc -> accc",
+        "probability": 0.2
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 80,
+    "state": "aacc",
+    "pattern": "accc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aacc -> accc",
+        "probability": 0.2
+      },
+      {
+        "transition": "accc -> cccc",
+        "probability": 0.833333
+      }
+    ],
+    "probability": 0.166667,
+    "confidence_score": 0.166667,
+    "decision": "normal"
+  },
+  {
+    "time_step": 81,
+    "state": "accc",
+    "pattern": "cccc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "accc -> cccc",
+        "probability": 0.833333
+      },
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      }
+    ],
+    "probability": 0.555556,
+    "confidence_score": 0.555556,
+    "decision": "normal"
+  },
+  {
+    "time_step": 82,
+    "state": "cccc",
+    "pattern": "ccca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      },
+      {
+        "transition": "ccca -> ccaa",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.333333,
+    "confidence_score": 0.333333,
+    "decision": "normal"
+  },
+  {
+    "time_step": 83,
+    "state": "ccca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccca -> ccaa",
+        "probability": 0.5
+      },
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      }
+    ],
+    "probability": 0.302326,
+    "confidence_score": 0.302326,
+    "decision": "normal"
+  },
+  {
+    "time_step": 84,
+    "state": "ccaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      },
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      }
+    ],
+    "probability": 0.521251,
+    "confidence_score": 0.521251,
+    "decision": "normal"
+  },
+  {
+    "time_step": 85,
+    "state": "caaa",
+    "pattern": "aaaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      },
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.832342,
+    "confidence_score": 0.832342,
+    "decision": "normal"
+  },
+  {
+    "time_step": 86,
+    "state": "aaaa",
+    "pattern": "aaac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.932224,
+    "confidence_score": 0.932224,
+    "decision": "normal"
+  },
+  {
+    "time_step": 87,
+    "state": "aaac",
+    "pattern": "aacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aacc -> accc",
+        "probability": 0.2
+      }
+    ],
+    "probability": 0.193103,
+    "confidence_score": 0.193103,
+    "decision": "normal"
+  },
+  {
+    "time_step": 88,
+    "state": "aacc",
+    "pattern": "accc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aacc -> accc",
+        "probability": 0.2
+      },
+      {
+        "transition": "accc -> cccc",
+        "probability": 0.833333
+      }
+    ],
+    "probability": 0.166667,
+    "confidence_score": 0.166667,
+    "decision": "normal"
+  },
+  {
+    "time_step": 89,
+    "state": "accc",
+    "pattern": "cccc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "accc -> cccc",
+        "probability": 0.833333
+      },
+      {
+        "transition": "cccc -> cccc",
+        "probability": 0.333333
+      }
+    ],
+    "probability": 0.277778,
+    "confidence_score": 0.277778,
+    "decision": "normal"
+  },
+  {
+    "time_step": 90,
+    "state": "cccc",
+    "pattern": "cccc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccc -> cccc",
+        "probability": 0.333333
+      },
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      }
+    ],
+    "probability": 0.222222,
+    "confidence_score": 0.222222,
+    "decision": "normal"
+  },
+  {
+    "time_step": 91,
+    "state": "cccc",
+    "pattern": "ccca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      },
+      {
+        "transition": "ccca -> ccac",
+        "probability": 0.3
+      }
+    ],
+    "probability": 0.2,
+    "confidence_score": 0.2,
+    "decision": "normal"
+  },
+  {
+    "time_step": 92,
+    "state": "ccca",
+    "pattern": "ccac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccca -> ccac",
+        "probability": 0.3
+      },
+      {
+        "transition": "ccac -> cacc",
+        "probability": 0.769231
+      }
+    ],
+    "probability": 0.230769,
+    "confidence_score": 0.230769,
+    "decision": "normal"
+  },
+  {
+    "time_step": 93,
+    "state": "ccac",
+    "pattern": "cacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccac -> cacc",
+        "probability": 0.769231
+      },
+      {
+        "transition": "cacc -> accc",
+        "probability": 0.081081
+      }
+    ],
+    "probability": 0.06237,
+    "confidence_score": 0.06237,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 94,
+    "state": "cacc",
+    "pattern": "accc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cacc -> accc",
+        "probability": 0.081081
+      },
+      {
+        "transition": "accc -> cccc",
+        "probability": 0.833333
+      }
+    ],
+    "probability": 0.067568,
+    "confidence_score": 0.067568,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 95,
+    "state": "accc",
+    "pattern": "cccc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "accc -> cccc",
+        "probability": 0.833333
+      },
+      {
+        "transition": "cccc -> cccb",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 96,
+    "state": "cccc",
+    "pattern": "cccb",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccc -> cccb",
+        "probability": 0.0
+      },
+      {
+        "transition": "cccb -> ccba",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 97,
+    "state": "cccb",
+    "pattern": "ccba",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccb -> ccba",
+        "probability": 0.0
+      },
+      {
+        "transition": "ccba -> cbaa",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 98,
+    "state": "ccba",
+    "pattern": "cbaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccba -> cbaa",
+        "probability": 1.0
+      },
+      {
+        "transition": "cbaa -> baac",
+        "probability": 0.2
+      }
+    ],
+    "probability": 0.2,
+    "confidence_score": 0.2,
+    "decision": "normal"
+  },
+  {
+    "time_step": 99,
+    "state": "cbaa",
+    "pattern": "baac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbaa -> baac",
+        "probability": 0.2
+      },
+      {
+        "transition": "baac -> aaca",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.1,
+    "confidence_score": 0.1,
+    "decision": "normal"
+  },
+  {
+    "time_step": 100,
+    "state": "baac",
+    "pattern": "aaca",
+    "status": "unseen",
+    "mapped_to": "aaca",
+    "transitions": [
+      {
+        "transition": "baac -> aaca",
+        "probability": 0.5
+      },
+      {
+        "transition": "aaca -> bcab",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 101,
+    "state": "aaca",
+    "pattern": "acab",
+    "status": "unseen",
+    "mapped_to": "bcab",
+    "transitions": [
+      {
+        "transition": "aaca -> bcab",
+        "probability": 0.0
+      },
+      {
+        "transition": "bcab -> cabb",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 102,
+    "state": "acab",
+    "pattern": "cabb",
+    "status": "unseen",
+    "mapped_to": "cabb",
+    "transitions": [
+      {
+        "transition": "bcab -> cabb",
+        "probability": 0.0
+      },
+      {
+        "transition": "cabb -> abba",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 103,
+    "state": "cabb",
+    "pattern": "abba",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cabb -> abba",
+        "probability": 1.0
+      },
+      {
+        "transition": "abba -> bbac",
+        "probability": 1.0
+      }
+    ],
+    "probability": 1.0,
+    "confidence_score": 1.0,
+    "decision": "normal"
+  },
+  {
+    "time_step": 104,
+    "state": "abba",
+    "pattern": "bbac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "abba -> bbac",
+        "probability": 1.0
+      },
+      {
+        "transition": "bbac -> bacc",
+        "probability": 1.0
+      }
+    ],
+    "probability": 1.0,
+    "confidence_score": 1.0,
+    "decision": "normal"
+  },
+  {
+    "time_step": 105,
+    "state": "bbac",
+    "pattern": "bacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bbac -> bacc",
+        "probability": 1.0
+      },
+      {
+        "transition": "bacc -> acca",
+        "probability": 0.6
+      }
+    ],
+    "probability": 0.6,
+    "confidence_score": 0.6,
+    "decision": "normal"
+  },
+  {
+    "time_step": 106,
+    "state": "bacc",
+    "pattern": "acca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bacc -> acca",
+        "probability": 0.6
+      },
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      }
+    ],
+    "probability": 0.321429,
+    "confidence_score": 0.321429,
+    "decision": "normal"
+  },
+  {
+    "time_step": 107,
+    "state": "acca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      },
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      }
+    ],
+    "probability": 0.32392,
+    "confidence_score": 0.32392,
+    "decision": "normal"
+  },
+  {
+    "time_step": 108,
+    "state": "ccaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      },
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      }
+    ],
+    "probability": 0.521251,
+    "confidence_score": 0.521251,
+    "decision": "normal"
+  },
+  {
+    "time_step": 109,
+    "state": "caaa",
+    "pattern": "aaaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      },
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.832342,
+    "confidence_score": 0.832342,
+    "decision": "normal"
+  },
+  {
+    "time_step": 110,
+    "state": "aaaa",
+    "pattern": "aaac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.932224,
+    "confidence_score": 0.932224,
+    "decision": "normal"
+  },
+  {
+    "time_step": 111,
+    "state": "aaac",
+    "pattern": "aacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aacc -> acca",
+        "probability": 0.514286
+      }
+    ],
+    "probability": 0.496552,
+    "confidence_score": 0.496552,
+    "decision": "normal"
+  },
+  {
+    "time_step": 112,
+    "state": "aacc",
+    "pattern": "acca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aacc -> acca",
+        "probability": 0.514286
+      },
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      }
+    ],
+    "probability": 0.27551,
+    "confidence_score": 0.27551,
+    "decision": "normal"
+  },
+  {
+    "time_step": 113,
+    "state": "acca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      },
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      }
+    ],
+    "probability": 0.32392,
+    "confidence_score": 0.32392,
+    "decision": "normal"
+  },
+  {
+    "time_step": 114,
+    "state": "ccaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      },
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      }
+    ],
+    "probability": 0.521251,
+    "confidence_score": 0.521251,
+    "decision": "normal"
+  },
+  {
+    "time_step": 115,
+    "state": "caaa",
+    "pattern": "aaaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      },
+      {
+        "transition": "aaaa -> aaab",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 116,
+    "state": "aaaa",
+    "pattern": "aaab",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaaa -> aaab",
+        "probability": 0.0
+      },
+      {
+        "transition": "aaab -> aabc",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 117,
+    "state": "aaab",
+    "pattern": "aabc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaab -> aabc",
+        "probability": 0.5
+      },
+      {
+        "transition": "aabc -> abca",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 118,
+    "state": "aabc",
+    "pattern": "abca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aabc -> abca",
+        "probability": 0.0
+      },
+      {
+        "transition": "abca -> bcaa",
+        "probability": 0.25
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 119,
+    "state": "abca",
+    "pattern": "bcaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "abca -> bcaa",
+        "probability": 0.25
+      },
+      {
+        "transition": "bcaa -> caaa",
+        "probability": 0.166667
+      }
+    ],
+    "probability": 0.041667,
+    "confidence_score": 0.041667,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 120,
+    "state": "bcaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bcaa -> caaa",
+        "probability": 0.166667
+      },
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      }
+    ],
+    "probability": 0.143678,
+    "confidence_score": 0.143678,
+    "decision": "normal"
+  },
+  {
+    "time_step": 121,
+    "state": "caaa",
+    "pattern": "aaaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      },
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.832342,
+    "confidence_score": 0.832342,
+    "decision": "normal"
+  },
+  {
+    "time_step": 122,
+    "state": "aaaa",
+    "pattern": "aaac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.932224,
+    "confidence_score": 0.932224,
+    "decision": "normal"
+  },
+  {
+    "time_step": 123,
+    "state": "aaac",
+    "pattern": "aacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aacc -> accb",
+        "probability": 0.285714
+      }
+    ],
+    "probability": 0.275862,
+    "confidence_score": 0.275862,
+    "decision": "normal"
+  },
+  {
+    "time_step": 124,
+    "state": "aacc",
+    "pattern": "accb",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aacc -> accb",
+        "probability": 0.285714
+      },
+      {
+        "transition": "accb -> ccba",
+        "probability": 0.052632
+      }
+    ],
+    "probability": 0.015038,
+    "confidence_score": 0.015038,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 125,
+    "state": "accb",
+    "pattern": "ccba",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "accb -> ccba",
+        "probability": 0.052632
+      },
+      {
+        "transition": "ccba -> cbaa",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.052632,
+    "confidence_score": 0.052632,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 126,
+    "state": "ccba",
+    "pattern": "cbaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccba -> cbaa",
+        "probability": 1.0
+      },
+      {
+        "transition": "cbaa -> baaa",
+        "probability": 0.6
+      }
+    ],
+    "probability": 0.6,
+    "confidence_score": 0.6,
+    "decision": "normal"
+  },
+  {
+    "time_step": 127,
+    "state": "cbaa",
+    "pattern": "baaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbaa -> baaa",
+        "probability": 0.6
+      },
+      {
+        "transition": "baaa -> aaac",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 128,
+    "state": "baaa",
+    "pattern": "aaac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "baaa -> aaac",
+        "probability": 0.0
+      },
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 129,
+    "state": "aaac",
+    "pattern": "aacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aacc -> acca",
+        "probability": 0.514286
+      }
+    ],
+    "probability": 0.496552,
+    "confidence_score": 0.496552,
+    "decision": "normal"
+  },
+  {
+    "time_step": 130,
+    "state": "aacc",
+    "pattern": "acca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aacc -> acca",
+        "probability": 0.514286
+      },
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      }
+    ],
+    "probability": 0.27551,
+    "confidence_score": 0.27551,
+    "decision": "normal"
+  },
+  {
+    "time_step": 131,
+    "state": "acca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      },
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      }
+    ],
+    "probability": 0.32392,
+    "confidence_score": 0.32392,
+    "decision": "normal"
+  },
+  {
+    "time_step": 132,
+    "state": "ccaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      },
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      }
+    ],
+    "probability": 0.521251,
+    "confidence_score": 0.521251,
+    "decision": "normal"
+  },
+  {
+    "time_step": 133,
+    "state": "caaa",
+    "pattern": "aaaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      },
+      {
+        "transition": "aaaa -> aaab",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 134,
+    "state": "aaaa",
+    "pattern": "aaab",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaaa -> aaab",
+        "probability": 0.0
+      },
+      {
+        "transition": "aaab -> aabc",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 135,
+    "state": "aaab",
+    "pattern": "aabc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaab -> aabc",
+        "probability": 0.5
+      },
+      {
+        "transition": "aabc -> abcc",
+        "probability": 0.75
+      }
+    ],
+    "probability": 0.375,
+    "confidence_score": 0.375,
+    "decision": "normal"
+  },
+  {
+    "time_step": 136,
+    "state": "aabc",
+    "pattern": "abcc",
+    "status": "unseen",
+    "mapped_to": "abcc",
+    "transitions": [
+      {
+        "transition": "aabc -> abcc",
+        "probability": 0.75
+      },
+      {
+        "transition": "abcc -> bcac",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 137,
+    "state": "abcc",
+    "pattern": "bccc",
+    "status": "unseen",
+    "mapped_to": "bcac",
+    "transitions": [
+      {
+        "transition": "abcc -> bcac",
+        "probability": 0.0
+      },
+      {
+        "transition": "bcac -> cccc",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 138,
+    "state": "bccc",
+    "pattern": "cccc",
+    "status": "unseen",
+    "mapped_to": "cccc",
+    "transitions": [
+      {
+        "transition": "bcac -> cccc",
+        "probability": 0.0
+      },
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 139,
+    "state": "cccc",
+    "pattern": "ccca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      },
+      {
+        "transition": "ccca -> ccab",
+        "probability": 0.2
+      }
+    ],
+    "probability": 0.133333,
+    "confidence_score": 0.133333,
+    "decision": "normal"
+  },
+  {
+    "time_step": 140,
+    "state": "ccca",
+    "pattern": "ccab",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccca -> ccab",
+        "probability": 0.2
+      },
+      {
+        "transition": "ccab -> cabc",
+        "probability": 0.888889
+      }
+    ],
+    "probability": 0.177778,
+    "confidence_score": 0.177778,
+    "decision": "normal"
+  },
+  {
+    "time_step": 141,
+    "state": "ccab",
+    "pattern": "cabc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccab -> cabc",
+        "probability": 0.888889
+      },
+      {
+        "transition": "cabc -> abcb",
+        "probability": 0.222222
+      }
+    ],
+    "probability": 0.197531,
+    "confidence_score": 0.197531,
+    "decision": "normal"
+  },
+  {
+    "time_step": 142,
+    "state": "cabc",
+    "pattern": "abcb",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cabc -> abcb",
+        "probability": 0.222222
+      },
+      {
+        "transition": "abcb -> bcba",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 143,
+    "state": "abcb",
+    "pattern": "bcba",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "abcb -> bcba",
+        "probability": 0.0
+      },
+      {
+        "transition": "bcba -> cbaa",
+        "probability": 0.25
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 144,
+    "state": "bcba",
+    "pattern": "cbaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bcba -> cbaa",
+        "probability": 0.25
+      },
+      {
+        "transition": "cbaa -> baaa",
+        "probability": 0.6
+      }
+    ],
+    "probability": 0.15,
+    "confidence_score": 0.15,
+    "decision": "normal"
+  },
+  {
+    "time_step": 145,
+    "state": "cbaa",
+    "pattern": "baaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbaa -> baaa",
+        "probability": 0.6
+      },
+      {
+        "transition": "baaa -> aaaa",
+        "probability": 0.75
+      }
+    ],
+    "probability": 0.45,
+    "confidence_score": 0.45,
+    "decision": "normal"
+  },
+  {
+    "time_step": 146,
+    "state": "baaa",
+    "pattern": "aaaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "baaa -> aaaa",
+        "probability": 0.75
+      },
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.724138,
+    "confidence_score": 0.724138,
+    "decision": "normal"
+  },
+  {
+    "time_step": 147,
+    "state": "aaaa",
+    "pattern": "aaac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aaac -> aacb",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 148,
+    "state": "aaac",
+    "pattern": "aacb",
+    "status": "unseen",
+    "mapped_to": "aacb",
+    "transitions": [
+      {
+        "transition": "aaac -> aacb",
+        "probability": 0.0
+      },
+      {
+        "transition": "aacb -> bcbc",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 149,
+    "state": "aacb",
+    "pattern": "acbc",
+    "status": "unseen",
+    "mapped_to": "bcbc",
+    "transitions": [
+      {
+        "transition": "aacb -> bcbc",
+        "probability": 0.0
+      },
+      {
+        "transition": "bcbc -> cbcc",
+        "probability": 0.333333
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 150,
+    "state": "acbc",
+    "pattern": "cbcc",
+    "status": "unseen",
+    "mapped_to": "cbcc",
+    "transitions": [
+      {
+        "transition": "bcbc -> cbcc",
+        "probability": 0.333333
+      },
+      {
+        "transition": "cbcc -> bccb",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 151,
+    "state": "cbcc",
+    "pattern": "bccb",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbcc -> bccb",
+        "probability": 0.0
+      },
+      {
+        "transition": "bccb -> ccbc",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 152,
+    "state": "bccb",
+    "pattern": "ccbc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bccb -> ccbc",
+        "probability": 1.0
+      },
+      {
+        "transition": "ccbc -> cbcc",
+        "probability": 0.35
+      }
+    ],
+    "probability": 0.35,
+    "confidence_score": 0.35,
+    "decision": "normal"
+  },
+  {
+    "time_step": 153,
+    "state": "ccbc",
+    "pattern": "cbcc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccbc -> cbcc",
+        "probability": 0.35
+      },
+      {
+        "transition": "cbcc -> bccb",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 154,
+    "state": "cbcc",
+    "pattern": "bccb",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbcc -> bccb",
+        "probability": 0.0
+      },
+      {
+        "transition": "bccb -> ccba",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 155,
+    "state": "bccb",
+    "pattern": "ccba",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bccb -> ccba",
+        "probability": 0.0
+      },
+      {
+        "transition": "ccba -> cbaa",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 156,
+    "state": "ccba",
+    "pattern": "cbaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccba -> cbaa",
+        "probability": 1.0
+      },
+      {
+        "transition": "cbaa -> baaa",
+        "probability": 0.6
+      }
+    ],
+    "probability": 0.6,
+    "confidence_score": 0.6,
+    "decision": "normal"
+  },
+  {
+    "time_step": 157,
+    "state": "cbaa",
+    "pattern": "baaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbaa -> baaa",
+        "probability": 0.6
+      },
+      {
+        "transition": "baaa -> aaab",
+        "probability": 0.25
+      }
+    ],
+    "probability": 0.15,
+    "confidence_score": 0.15,
+    "decision": "normal"
+  },
+  {
+    "time_step": 158,
+    "state": "baaa",
+    "pattern": "aaab",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "baaa -> aaab",
+        "probability": 0.25
+      },
+      {
+        "transition": "aaab -> aabc",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.125,
+    "confidence_score": 0.125,
+    "decision": "normal"
+  },
+  {
+    "time_step": 159,
+    "state": "aaab",
+    "pattern": "aabc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaab -> aabc",
+        "probability": 0.5
+      },
+      {
+        "transition": "aabc -> abcc",
+        "probability": 0.75
+      }
+    ],
+    "probability": 0.375,
+    "confidence_score": 0.375,
+    "decision": "normal"
+  },
+  {
+    "time_step": 160,
+    "state": "aabc",
+    "pattern": "abcc",
+    "status": "unseen",
+    "mapped_to": "abcc",
+    "transitions": [
+      {
+        "transition": "aabc -> abcc",
+        "probability": 0.75
+      },
+      {
+        "transition": "abcc -> bcac",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 161,
+    "state": "abcc",
+    "pattern": "bccc",
+    "status": "unseen",
+    "mapped_to": "bcac",
+    "transitions": [
+      {
+        "transition": "abcc -> bcac",
+        "probability": 0.0
+      },
+      {
+        "transition": "bcac -> cccc",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 162,
+    "state": "bccc",
+    "pattern": "cccc",
+    "status": "unseen",
+    "mapped_to": "cccc",
+    "transitions": [
+      {
+        "transition": "bcac -> cccc",
+        "probability": 0.0
+      },
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 163,
+    "state": "cccc",
+    "pattern": "ccca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cccc -> ccca",
+        "probability": 0.666667
+      },
+      {
+        "transition": "ccca -> ccac",
+        "probability": 0.3
+      }
+    ],
+    "probability": 0.2,
+    "confidence_score": 0.2,
+    "decision": "normal"
+  },
+  {
+    "time_step": 164,
+    "state": "ccca",
+    "pattern": "ccac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccca -> ccac",
+        "probability": 0.3
+      },
+      {
+        "transition": "ccac -> cacc",
+        "probability": 0.769231
+      }
+    ],
+    "probability": 0.230769,
+    "confidence_score": 0.230769,
+    "decision": "normal"
+  },
+  {
+    "time_step": 165,
+    "state": "ccac",
+    "pattern": "cacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccac -> cacc",
+        "probability": 0.769231
+      },
+      {
+        "transition": "cacc -> acca",
+        "probability": 0.783784
+      }
+    ],
+    "probability": 0.602911,
+    "confidence_score": 0.602911,
+    "decision": "normal"
+  },
+  {
+    "time_step": 166,
+    "state": "cacc",
+    "pattern": "acca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cacc -> acca",
+        "probability": 0.783784
+      },
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      }
+    ],
+    "probability": 0.419884,
+    "confidence_score": 0.419884,
+    "decision": "normal"
+  },
+  {
+    "time_step": 167,
+    "state": "acca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      },
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      }
+    ],
+    "probability": 0.32392,
+    "confidence_score": 0.32392,
+    "decision": "normal"
+  },
+  {
+    "time_step": 168,
+    "state": "ccaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      },
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      }
+    ],
+    "probability": 0.521251,
+    "confidence_score": 0.521251,
+    "decision": "normal"
+  },
+  {
+    "time_step": 169,
+    "state": "caaa",
+    "pattern": "aaaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      },
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.832342,
+    "confidence_score": 0.832342,
+    "decision": "normal"
+  },
+  {
+    "time_step": 170,
+    "state": "aaaa",
+    "pattern": "aaac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.932224,
+    "confidence_score": 0.932224,
+    "decision": "normal"
+  },
+  {
+    "time_step": 171,
+    "state": "aaac",
+    "pattern": "aacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aacc -> accb",
+        "probability": 0.285714
+      }
+    ],
+    "probability": 0.275862,
+    "confidence_score": 0.275862,
+    "decision": "normal"
+  },
+  {
+    "time_step": 172,
+    "state": "aacc",
+    "pattern": "accb",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aacc -> accb",
+        "probability": 0.285714
+      },
+      {
+        "transition": "accb -> ccba",
+        "probability": 0.052632
+      }
+    ],
+    "probability": 0.015038,
+    "confidence_score": 0.015038,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 173,
+    "state": "accb",
+    "pattern": "ccba",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "accb -> ccba",
+        "probability": 0.052632
+      },
+      {
+        "transition": "ccba -> cbac",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 174,
+    "state": "ccba",
+    "pattern": "cbac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccba -> cbac",
+        "probability": 0.0
+      },
+      {
+        "transition": "cbac -> bacb",
+        "probability": 0.2
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 175,
+    "state": "cbac",
+    "pattern": "bacb",
+    "status": "unseen",
+    "mapped_to": "bacb",
+    "transitions": [
+      {
+        "transition": "cbac -> bacb",
+        "probability": 0.2
+      },
+      {
+        "transition": "bacb -> bcbc",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 176,
+    "state": "bacb",
+    "pattern": "acbc",
+    "status": "unseen",
+    "mapped_to": "bcbc",
+    "transitions": [
+      {
+        "transition": "bacb -> bcbc",
+        "probability": 0.0
+      },
+      {
+        "transition": "bcbc -> cbcc",
+        "probability": 0.333333
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 177,
+    "state": "acbc",
+    "pattern": "cbcc",
+    "status": "unseen",
+    "mapped_to": "cbcc",
+    "transitions": [
+      {
+        "transition": "bcbc -> cbcc",
+        "probability": 0.333333
+      },
+      {
+        "transition": "cbcc -> bcca",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.333333,
+    "confidence_score": 0.333333,
+    "decision": "normal"
+  },
+  {
+    "time_step": 178,
+    "state": "cbcc",
+    "pattern": "bcca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cbcc -> bcca",
+        "probability": 1.0
+      },
+      {
+        "transition": "bcca -> ccaa",
+        "probability": 0.666667
+      }
+    ],
+    "probability": 0.666667,
+    "confidence_score": 0.666667,
+    "decision": "normal"
+  },
+  {
+    "time_step": 179,
+    "state": "bcca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bcca -> ccaa",
+        "probability": 0.666667
+      },
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      }
+    ],
+    "probability": 0.403101,
+    "confidence_score": 0.403101,
+    "decision": "normal"
+  },
+  {
+    "time_step": 180,
+    "state": "ccaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      },
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      }
+    ],
+    "probability": 0.521251,
+    "confidence_score": 0.521251,
+    "decision": "normal"
+  },
+  {
+    "time_step": 181,
+    "state": "caaa",
+    "pattern": "aaaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      },
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.832342,
+    "confidence_score": 0.832342,
+    "decision": "normal"
+  },
+  {
+    "time_step": 182,
+    "state": "aaaa",
+    "pattern": "aaac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaaa -> aaac",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.932224,
+    "confidence_score": 0.932224,
+    "decision": "normal"
+  },
+  {
+    "time_step": 183,
+    "state": "aaac",
+    "pattern": "aacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aacc -> accc",
+        "probability": 0.2
+      }
+    ],
+    "probability": 0.193103,
+    "confidence_score": 0.193103,
+    "decision": "normal"
+  },
+  {
+    "time_step": 184,
+    "state": "aacc",
+    "pattern": "accc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aacc -> accc",
+        "probability": 0.2
+      },
+      {
+        "transition": "accc -> ccca",
+        "probability": 0.0
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 185,
+    "state": "accc",
+    "pattern": "ccca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "accc -> ccca",
+        "probability": 0.0
+      },
+      {
+        "transition": "ccca -> ccaa",
+        "probability": 0.5
+      }
+    ],
+    "probability": 0.0,
+    "confidence_score": 0.0,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 186,
+    "state": "ccca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccca -> ccaa",
+        "probability": 0.5
+      },
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      }
+    ],
+    "probability": 0.302326,
+    "confidence_score": 0.302326,
+    "decision": "normal"
+  },
+  {
+    "time_step": 187,
+    "state": "ccaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      },
+      {
+        "transition": "caaa -> aaac",
+        "probability": 0.034483
+      }
+    ],
+    "probability": 0.02085,
+    "confidence_score": 0.02085,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 188,
+    "state": "caaa",
+    "pattern": "aaac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caaa -> aaac",
+        "probability": 0.034483
+      },
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      }
+    ],
+    "probability": 0.033294,
+    "confidence_score": 0.033294,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 189,
+    "state": "aaac",
+    "pattern": "aacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaac -> aacc",
+        "probability": 0.965517
+      },
+      {
+        "transition": "aacc -> acca",
+        "probability": 0.514286
+      }
+    ],
+    "probability": 0.496552,
+    "confidence_score": 0.496552,
+    "decision": "normal"
+  },
+  {
+    "time_step": 190,
+    "state": "aacc",
+    "pattern": "acca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aacc -> acca",
+        "probability": 0.514286
+      },
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      }
+    ],
+    "probability": 0.27551,
+    "confidence_score": 0.27551,
+    "decision": "normal"
+  },
+  {
+    "time_step": 191,
+    "state": "acca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      },
+      {
+        "transition": "ccaa -> caab",
+        "probability": 0.162791
+      }
+    ],
+    "probability": 0.087209,
+    "confidence_score": 0.087209,
+    "decision": "anomaly"
+  },
+  {
+    "time_step": 192,
+    "state": "ccaa",
+    "pattern": "caab",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caab",
+        "probability": 0.162791
+      },
+      {
+        "transition": "caab -> aaba",
+        "probability": 0.8
+      }
+    ],
+    "probability": 0.130233,
+    "confidence_score": 0.130233,
+    "decision": "normal"
+  },
+  {
+    "time_step": 193,
+    "state": "caab",
+    "pattern": "aaba",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caab -> aaba",
+        "probability": 0.8
+      },
+      {
+        "transition": "aaba -> abac",
+        "probability": 0.777778
+      }
+    ],
+    "probability": 0.622222,
+    "confidence_score": 0.622222,
+    "decision": "normal"
+  },
+  {
+    "time_step": 194,
+    "state": "aaba",
+    "pattern": "abac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaba -> abac",
+        "probability": 0.777778
+      },
+      {
+        "transition": "abac -> bacc",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.777778,
+    "confidence_score": 0.777778,
+    "decision": "normal"
+  },
+  {
+    "time_step": 195,
+    "state": "abac",
+    "pattern": "bacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "abac -> bacc",
+        "probability": 1.0
+      },
+      {
+        "transition": "bacc -> acca",
+        "probability": 0.6
+      }
+    ],
+    "probability": 0.6,
+    "confidence_score": 0.6,
+    "decision": "normal"
+  },
+  {
+    "time_step": 196,
+    "state": "bacc",
+    "pattern": "acca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "bacc -> acca",
+        "probability": 0.6
+      },
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      }
+    ],
+    "probability": 0.321429,
+    "confidence_score": 0.321429,
+    "decision": "normal"
+  },
+  {
+    "time_step": 197,
+    "state": "acca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      },
+      {
+        "transition": "ccaa -> caac",
+        "probability": 0.232558
+      }
+    ],
+    "probability": 0.124585,
+    "confidence_score": 0.124585,
+    "decision": "normal"
+  },
+  {
+    "time_step": 198,
+    "state": "ccaa",
+    "pattern": "caac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caac",
+        "probability": 0.232558
+      },
+      {
+        "transition": "caac -> aaca",
+        "probability": 0.473684
+      }
+    ],
+    "probability": 0.110159,
+    "confidence_score": 0.110159,
+    "decision": "normal"
+  },
+  {
+    "time_step": 199,
+    "state": "caac",
+    "pattern": "aaca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "caac -> aaca",
+        "probability": 0.473684
+      },
+      {
+        "transition": "aaca -> acac",
+        "probability": 0.909091
+      }
+    ],
+    "probability": 0.430622,
+    "confidence_score": 0.430622,
+    "decision": "normal"
+  },
+  {
+    "time_step": 200,
+    "state": "aaca",
+    "pattern": "acac",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "aaca -> acac",
+        "probability": 0.909091
+      },
+      {
+        "transition": "acac -> cacc",
+        "probability": 1.0
+      }
+    ],
+    "probability": 0.909091,
+    "confidence_score": 0.909091,
+    "decision": "normal"
+  },
+  {
+    "time_step": 201,
+    "state": "acac",
+    "pattern": "cacc",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acac -> cacc",
+        "probability": 1.0
+      },
+      {
+        "transition": "cacc -> acca",
+        "probability": 0.783784
+      }
+    ],
+    "probability": 0.783784,
+    "confidence_score": 0.783784,
+    "decision": "normal"
+  },
+  {
+    "time_step": 202,
+    "state": "cacc",
+    "pattern": "acca",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "cacc -> acca",
+        "probability": 0.783784
+      },
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      }
+    ],
+    "probability": 0.419884,
+    "confidence_score": 0.419884,
+    "decision": "normal"
+  },
+  {
+    "time_step": 203,
+    "state": "acca",
+    "pattern": "ccaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "acca -> ccaa",
+        "probability": 0.535714
+      },
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      }
+    ],
+    "probability": 0.32392,
+    "confidence_score": 0.32392,
+    "decision": "normal"
+  },
+  {
+    "time_step": 204,
+    "state": "ccaa",
+    "pattern": "caaa",
+    "status": "seen",
+    "mapped_to": null,
+    "transitions": [
+      {
+        "transition": "ccaa -> caaa",
+        "probability": 0.604651
+      },
+      {
+        "transition": "caaa -> aaaa",
+        "probability": 0.862069
+      }
+    ],
+    "probability": 0.521251,
+    "confidence_score": 0.521251,
+    "decision": "normal"
+  }
+]

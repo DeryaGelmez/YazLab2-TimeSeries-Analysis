@@ -1,9 +1,11 @@
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import networkx as nx
+from sklearn.metrics import roc_curve, auc, precision_recall_curve, average_precision_score
 
 
 def plot_confusion_matrix(
@@ -152,3 +154,81 @@ def plot_state_diagram(
     plt.savefig(save_path)
 
     plt.close()
+
+
+def plot_roc_curve(
+    y_true,
+    y_scores,
+    save_path,
+    title="ROC Curve"
+):
+    """
+    Automata modeli için ROC eğrisi çizer.
+    y_scores: anomali skoru (yüksek = daha anormal).
+              path probability düşük → anomali yüksek olduğundan
+              y_scores = 1 - path_probability olarak geçilmeli.
+    """
+    save_path = Path(save_path)
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+
+    y_true = np.asarray(y_true)
+    y_scores = np.asarray(y_scores, dtype=float)
+
+    if len(np.unique(y_true)) < 2:
+        print(f"  [UYARI] ROC eğrisi atlandı: y_true tek sınıf içeriyor ({title})")
+        return float("nan")
+
+    fpr, tpr, _ = roc_curve(y_true, y_scores)
+    roc_auc = auc(fpr, tpr)
+
+    plt.figure(figsize=(7, 5))
+    plt.plot(fpr, tpr, color="steelblue", lw=2,
+             label=f"ROC (AUC = {roc_auc:.3f})")
+    plt.plot([0, 1], [0, 1], color="gray", lw=1, linestyle="--")
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title(title)
+    plt.legend(loc="lower right")
+    plt.tight_layout()
+    plt.savefig(save_path)
+    plt.close()
+
+    return roc_auc
+
+
+def plot_pr_curve(
+    y_true,
+    y_scores,
+    save_path,
+    title="Precision-Recall Curve"
+):
+    """
+    Automata modeli için Precision-Recall eğrisi çizer.
+    """
+    save_path = Path(save_path)
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+
+    y_true = np.asarray(y_true)
+    y_scores = np.asarray(y_scores, dtype=float)
+
+    if len(np.unique(y_true)) < 2:
+        print(f"  [UYARI] PR eğrisi atlandı: y_true tek sınıf içeriyor ({title})")
+        return float("nan")
+
+    precision, recall, _ = precision_recall_curve(y_true, y_scores)
+    ap = average_precision_score(y_true, y_scores)
+
+    plt.figure(figsize=(7, 5))
+    plt.plot(recall, precision, color="darkorange", lw=2,
+             label=f"PR (AP = {ap:.3f})")
+    plt.xlabel("Recall")
+    plt.ylabel("Precision")
+    plt.title(title)
+    plt.legend(loc="upper right")
+    plt.tight_layout()
+    plt.savefig(save_path)
+    plt.close()
+
+    return ap

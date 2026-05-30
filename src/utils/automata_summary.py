@@ -39,7 +39,7 @@ def _load_original_scenario():
         path = LOGS_DIR / fname
         if not path.exists():
             continue
-        df = pd.read_csv(path)
+        df = pd.read_csv(path, on_bad_lines="skip")
         last = df.iloc[-1]
         records.append({
             "dataset": dataset,

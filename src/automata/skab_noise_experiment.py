@@ -73,7 +73,7 @@ def main():
             threshold=AUTOMATA_PROBABILITY_THRESHOLD
         )
 
-        y_test = y_test_original[:len(y_pred)]
+        y_test = y_test_original[1:1 + len(y_pred)]
         metrics = calculate_classification_metrics(y_test, y_pred)
 
         seed_results.append({
