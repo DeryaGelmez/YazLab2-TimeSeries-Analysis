@@ -19,8 +19,10 @@ kullanılarak anomali tespiti gerçekleştirilmektedir.
 
 ## BATADAL
 
-- Su dağıtım sistemi saldırı tespit veri seti
-- Zaman sıralı train/validation/test ayrımı uygulanmıştır
+- Su dağıtım sistemi saldırı tespit veri seti (Training Dataset 2 kullanılmıştır)
+- **Etiket sütunu:** `ATT_FLAG` → `anomaly` olarak yeniden adlandırılmıştır (0 = normal, 1 = saldırı)
+- Zaman bilgisi içeren `DATETIME` sütunu model girdisine dahil edilmemiş, yalnızca sıralama için kullanılmıştır
+- Zaman sıralı bölünme: %60 train / %20 validation / %20 test
 
 ---
 
@@ -124,7 +126,7 @@ Model her karar için aşağıdaki bilgileri üretmektedir:
 - path probability
 - anomaly kararı
 
-Örnek çıktı:
+PDF örneğiyle uyumlu çıktı (unseen senaryosu):
 
 ```json
 {
@@ -133,10 +135,38 @@ Model her karar için aşağıdaki bilgileri üretmektedir:
   "pattern": "adc",
   "status": "unseen",
   "mapped_to": "abc",
+  "nearest_distance": 1,
+  "transitions": [
+    {"transition": "aab -> abc", "probability": 0.720000},
+    {"transition": "abc -> bcc", "probability": 0.150000}
+  ],
   "probability": 0.108,
+  "confidence_score": 0.108,
   "decision": "anomaly"
 }
 ```
+
+Gerçek sistem çıktısından örnek (seen senaryosu, anomali kararı):
+
+```json
+{
+  "time_step": 12,
+  "state": "baaa",
+  "pattern": "aaaa",
+  "status": "seen",
+  "mapped_to": null,
+  "nearest_distance": null,
+  "transitions": [
+    {"transition": "baaa -> aaaa", "probability": 0.708029},
+    {"transition": "aaaa -> aaab", "probability": 0.130560}
+  ],
+  "probability": 0.092440,
+  "confidence_score": 0.092440,
+  "decision": "anomaly"
+}
+```
+
+**Karar gerekçesi:** P(baaa→aaaa) × P(aaaa→aaab) = 0.708 × 0.131 = **0.092 < 0.10 (eşik)** → ANOMALİ
 
 ---
 
@@ -144,22 +174,24 @@ Model her karar için aşağıdaki bilgileri üretmektedir:
 
 Proje kapsamında otomatik olarak aşağıdaki görseller oluşturulmaktadır:
 
-- Confusion Matrix
-- Transition Probability Heatmap
-- Automata State Diagram
-- Parameter Sensitivity Graphs
-- F1-score vs Alphabet Size
-- Recall vs Alphabet Size
-- State Count vs Alphabet Size
-- Transition Density vs Alphabet Size
+**Otomata görselleri** (`results/figures/`):
 
-Çıktılar aşağıdaki klasörlerde saklanmaktadır:
+| Görsel | Dosya |
+| :--- | :--- |
+| Confusion Matrix | `skab_automata_confusion_matrix.png` |
+| ROC Eğrisi (AUC=0.40) | `skab_automata_roc_curve.png` |
+| Precision-Recall Eğrisi | `skab_automata_pr_curve.png` |
+| Transition Probability Heatmap | `skab_automata_transition_heatmap.png` |
+| Automata State Diagram | `skab_automata_state_diagram.png` |
+| F1 vs Alphabet (sabit fold) | `skab_f1_score_vs_alphabet.png` |
+| F1 vs Alphabet (GroupKFold, mean±std) | `skab_f1_score_vs_alphabet_gkf.png` |
+| Recall vs Alphabet | `skab_recall_vs_alphabet.png` |
+| State Count vs Alphabet | `skab_state_count_vs_alphabet.png` |
+| Transition Density vs Alphabet | `skab_transition_density_vs_alphabet.png` |
 
-```text
-results/figures/
-results/logs/
-results/metrics/
-```
+BATADAL için de eşdeğer görseller (`batadal_*` önekiyle) üretilmektedir.
+
+**Derin öğrenme görselleri** (`outputs/figures/<run_id>/`): loss, accuracy, confusion matrix, ROC, PR eğrileri.
 
 ---
 
@@ -188,25 +220,32 @@ Analiz sonuçları göstermiştir ki:
 
 Bu durum anomaly detection problemlerindeki klasik trade-off yapısını göstermektedir.
 
-## SKAB En İyi Sonuç
+## SKAB En İyi Parametre (GroupKFold, 5 fold)
 
 ```text
-window_size = 6
+window_size   = 5
 alphabet_size = 6
 
-F1-score = 0.394
-Recall = 0.759
+F1-score = 0.494 ± 0.069   (fold ortalaması ± std)
+State sayısı ≈ 1420
+Geçiş yoğunluğu = 0.00112
 ```
 
-## BATADAL En İyi Sonuç
+> Değerlendirme: 5-fold GroupKFold (source_file bazlı). Path probability = P(prev→cur) × P(cur→next).
+
+## BATADAL En İyi Parametre (zaman sıralı test)
 
 ```text
-window_size = 4
+window_size   = 4
 alphabet_size = 6
 
-F1-score = 0.090
-Recall = 0.714
+F1-score = 0.074
+Recall   = 0.857
+State sayısı ≈ 239
 ```
+
+> Not: BATADAL'da yüksek recall (%85.7) düşük precision (%4) ile birlikte gelir.
+> Pozitif sınıf oranı ~%4 olduğundan F1 değeri yapısal olarak düşük kalmaktadır.
 
 ---
 
@@ -219,13 +258,43 @@ Projede aşağıdaki değerlendirme metrikleri kullanılmaktadır:
 - Recall
 - F1-Score
 
-Ek olarak:
+Ek olarak: state count, transition density, path probability, ROC-AUC, Average Precision analizleri gerçekleştirilmektedir.
 
-- state count
-- transition density
-- path probability
+## İstatistiksel Güvenilirlik
 
-analizleri gerçekleştirilmektedir.
+### Deney Tekrarı
+
+Her rastgele işlem içeren deney **5 farklı seed** [42, 123, 2026, 7, 999] ile çalıştırılmış, sonuçlar **ortalama ± standart sapma** olarak raporlanmıştır.
+
+**SKAB** — fold bazlı sonuçlar (window=4, alphabet=3):
+
+| Fold | F1 | Recall | Precision |
+| :---: | :---: | :---: | :---: |
+| 1 | 0.171 | 0.138 | 0.227 |
+| 2 | 0.336 | 0.278 | 0.424 |
+| 3 | 0.224 | 0.172 | 0.324 |
+| 4 | 0.316 | 0.217 | 0.580 |
+| 5 | 0.203 | 0.170 | 0.253 |
+| **mean±std** | **0.250 ± 0.072** | 0.195 ± 0.055 | 0.362 ± 0.144 |
+
+**BATADAL** — zaman sıralı test kümesi sonuçları (window=4, alphabet=3):
+
+| Accuracy | Precision | Recall | F1 | ROC-AUC |
+| :---: | :---: | :---: | :---: | :---: |
+| 0.569 | 0.024 | 0.286 | 0.043 | 0.362 |
+
+### Wilcoxon İstatistiksel Testleri
+
+Otomata senaryo karşılaştırması için Wilcoxon signed-rank testi (`scipy.stats.wilcoxon`) uygulanmıştır.
+Modül: `src/utils/statistical_tests.py` → `run_wilcoxon_pairwise()`
+
+| Karşılaştırma | p-değeri | Anlamlı (α=0.05)? |
+| :--- | :---: | :---: |
+| SKAB: Original vs Gaussian Noise | 0.0625 | Hayır |
+| SKAB: Noise vs Controlled Unseen | 0.0625 | Hayır |
+| SKAB: Original vs Controlled Unseen | 0.0625 | Hayır |
+
+**Yorum:** p=0.0625, n=5 için Wilcoxon testinin üretebileceği **minimum p değeridir**. Yani senaryo farklılıkları istatistiksel olarak kanıtlanamayacak kadar küçük bir örneklem üzerinde test edilmektedir. Bu, küçük örneklem boyutunun (n=5 seed/fold) istatistiksel gücü doğrudan sınırladığını göstermekte; etki büyüklükleri (özellikle unseen F1=0.289 vs original F1=0.171) pratik anlamlılık taşısa da istatistiksel anlamlılık eşiğine ulaşılamamaktadır.
 
 ---
 
@@ -237,7 +306,7 @@ Projede aşağıdaki PyTorch tabanlı modeller uygulanmıştır:
 - GRU
 - 1D-CNN
 
-Modeller çok değişkenli (multivariate) scaled veri üzerinde sliding-window ile sequence oluşturarak eğitilir. Derin öğrenme modelleri ile automata modeli final aşamada karşılaştırılacaktır.
+Modeller çok değişkenli (multivariate) scaled veri üzerinde sliding-window ile sequence oluşturarak eğitilir. Derin öğrenme modelleri ile otomata modelinin karşılaştırması **DL vs Otomata Karşılaştırması** bölümünde sunulmaktadır.
 
 Karşılaştırmalarda aşağıdaki metrikler kullanılmaktadır:
 
@@ -406,7 +475,7 @@ Grid 2 ek sabitleri:
 
 # Derin Öğrenme — Deney Sonuçları ve Analiz (Taslak)
 
-> **Durum:** Bu bölüm, nihai raporun derin öğrenme (DL) bölümüne ilişkin taslak metnidir. Otomata tabanlı model sonuçları elde edildiğinde *DL–Otomata Karşılaştırması* alt bölümü tamamlanacaktır. Tablolardaki değerler, her biri 270 deney içeren iki grid'in ham çıktılarından (`raw_results.csv`, `raw_results_wbce.csv`) türetilmiştir.
+> Tablolardaki değerler, her biri 270 deney içeren iki grid'in ham çıktılarından (`raw_results.csv`, `raw_results_wbce.csv`) türetilmiştir. DL–Otomata karşılaştırması son bölümde sunulmaktadır.
 
 ## Deney Tasarımı Özeti
 
@@ -663,7 +732,7 @@ Proje tanımında öngörülen Tablo 2 formatına uygun özet (`outputs/metrics/
 | Referans DL sonucu | **Grid 2 / SKAB / GRU** — F1≈0.62 ± 0.10 |
 | İki grid'in raporlanması | Grid 1: temel BCE deneyleri; Grid 2: sınıf dengesizliği müdahalesi |
 | BATADAL performansı | Majority-class collapse baskın; veri seti–model etkileşimi analiz edilmeli |
-| Otomata karşılaştırması | Tamamlanacak — DL tarafında Grid 2 referans alınacak |
+| Otomata karşılaştırması | Tamamlandı — DL vs Otomata bölümüne bakınız |
 
 ### Bulguların Yorumlanması
 
@@ -788,21 +857,15 @@ DL modelleri bu türde bir karar gerekçesi üretemez. Kararlar yalnızca ağır
 
 # Deneysel Senaryolar
 
-Deneyler aşağıdaki senaryolar altında gerçekleştirilmiştir:
+Deneyler üç farklı senaryo altında yürütülmüş, **tüm karşılaştırmalar sabit parametrelerle** (window=4, alphabet=3) yapılmıştır:
 
-- Orijinal veri
-- Gaussian Noise eklenmiş veri (std=0.05)
-- Controlled Unseen Pattern verisi (%10 modifikasyon oranı)
+| Senaryo | Açıklama | Parametre |
+| :--- | :--- | :--- |
+| **Orijinal** | İşlenmiş test verisi olduğu gibi kullanılır | — |
+| **Gaussian Noise** | Test PC1 serisine Gaussian gürültü eklenir | std=0.05, 5 seed |
+| **Controlled Unseen** | Test pattern’larının %10’u değiştirilir | 5 seed |
 
-## Gaussian Noise Deneyi
-
-Test verisine düşük seviyeli Gaussian gürültü eklenerek model dayanıklılığı ölçülmüştür. Sabit parametrelerle (w=4, a=3) SAX sembolik temsili gürültüyü absorbe ettiğinden otomata performansı neredeyse değişmemiştir (SKAB: F1=0.179±0.005). DL modelleri de gürültüye karşı dayanıklı kalmıştır (SKAB GRU: ~-2% F1).
-
-## Controlled Unseen Experiment
-
-Levenshtein Distance (edit distance) algoritması ile unseen pattern yönetimi uygulanmıştır. Test sırasında eğitim sözlüğünde bulunmayan pattern’lar tespit edilerek en yakın bilinen pattern’a eşlenir ve sistem bu state üzerinden çalışmaya devam eder.
-
-**Önemli Gözlem:** Sabit parametrelerle (w=4, a=3) üretilen modifikasyonların çoğu yine de eğitim sözlüğünde yer bulmakta, gerçek unseen sayısı sıfıra yakın kalmaktadır. Bu durum, küçük alfabe boyutlarında SAX sözlüğünün doygunluğa ulaştığını göstermektedir.
+Senaryo karşılaştırma sonuçları ve yorumları için **Senaryo Karşılaştırması — Otomata** ve **DL vs Otomata Karşılaştırması** bölümlerine bakınız.
 
 ---
 
