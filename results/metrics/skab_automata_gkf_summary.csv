@@ -1,0 +1,2 @@
+dataset,model,window_size,alphabet_size,threshold,n_folds,accuracy_mean,accuracy_std,precision_mean,precision_std,recall_mean,recall_std,f1_score_mean,f1_score_std,state_count_mean,transition_density_mean
+SKAB,Automata,4,3,0.1,5,0.5902134534347571,0.051120557636641695,0.3615768079714445,0.14387019228998382,0.19478135244418066,0.05453783503327939,0.25008962582977884,0.0720051867001618,80.2,0.03302645309779538

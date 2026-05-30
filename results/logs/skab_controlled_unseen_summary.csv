@@ -1,0 +1,2 @@
+dataset,scenario,window_size,alphabet_size,unseen_ratio_target,accuracy_mean,accuracy_std,precision_mean,precision_std,recall_mean,recall_std,f1_score_mean,f1_score_std
+SKAB,controlled_unseen,4,3,0.1,0.5213523131672597,0.02123149388573261,0.26838325052470446,0.02755173178064767,0.31346704871060177,0.03142732282681092,0.289155587116211,0.029214227819037448

@@ -1,0 +1,2 @@
+dataset,model,accuracy,f1_score,timestamp
+SKAB,Automata,0.8,0.75,2026-05-19 10:06:24

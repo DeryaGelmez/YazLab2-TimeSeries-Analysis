@@ -1,0 +1,2 @@
+dataset,scenario,model,window_size,alphabet_size,noise_std,accuracy_mean,accuracy_std,precision_mean,precision_std,recall_mean,recall_std,f1_score_mean,f1_score_std
+BATADAL,gaussian_noise,Automata,4,3,0.05,0.5833333333333334,0.00346620971169875,0.024391695054835422,0.00021036392353739183,0.2857142857142857,0.0,0.04494609011462944,0.0003571381624473496

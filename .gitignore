@@ -8,6 +8,10 @@ Dataset/
 *.csv
 *.xlsx
 
+# results/ klasörü tamamen takip edilir (*.csv override)
+!results/
+!results/**
+
 
 # System files
 .DS_Store

@@ -1,0 +1,2 @@
+dataset,scenario,window_size,alphabet_size,unseen_ratio_target,accuracy_mean,accuracy_std,precision_mean,precision_std,recall_mean,recall_std,f1_score_mean,f1_score_std
+BATADAL,controlled_unseen,4,3,0.1,0.4696078431372549,0.0373965316132562,0.01889767969580718,0.006587733065856558,0.2857142857142857,0.10101525445522107,0.03544317931683109,0.012364653568026872

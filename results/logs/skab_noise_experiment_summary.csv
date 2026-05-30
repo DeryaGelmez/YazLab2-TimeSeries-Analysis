@@ -1,0 +1,2 @@
+dataset,scenario,model,window_size,alphabet_size,noise_std,accuracy_mean,accuracy_std,precision_mean,precision_std,recall_mean,recall_std,f1_score_mean,f1_score_std
+SKAB,gaussian_noise,Automata,4,3,0.05,0.5919928825622776,0.0031202273873221003,0.23904755138770484,0.004602629693004892,0.1438395415472779,0.004708216826691977,0.1795825106945441,0.004551931807894788
