@@ -83,13 +83,15 @@ def predict_with_automata(
         mapped_prev = prev_pattern
         mapped_current = current_pattern
         mapped_next = next_pattern
+        nearest_distance = None
 
         if prev_pattern not in train_states:
             mapped_prev, _ = find_nearest_pattern(prev_pattern, train_states)
             status = "unseen"
 
         if current_pattern not in train_states:
-            mapped_current, _ = find_nearest_pattern(current_pattern, train_states)
+            mapped_current, dist = find_nearest_pattern(current_pattern, train_states)
+            nearest_distance = dist
             status = "unseen"
 
         if next_pattern not in train_states:
@@ -118,6 +120,7 @@ def predict_with_automata(
             "mapped_next": mapped_next,
             "status": status,
             "mapped_to": mapped_current if status == "unseen" else None,
+            "levenshtein_distance": nearest_distance,
             "transition_prev_cur": f"{mapped_prev} -> {mapped_current}",
             "prob_prev_cur": prob_prev_cur,
             "transition_cur_next": f"{mapped_current} -> {mapped_next}",
@@ -272,10 +275,11 @@ def main():
     for exp in explanations:
         json_records.append({
             "time_step": exp["time_step"],
-            "state": exp["state"],           # previous state (PDF örneği: "aab")
-            "pattern": exp["pattern"],        # incoming pattern (PDF örneği: "adc")
+            "state": exp["state"],
+            "pattern": exp["pattern"],
             "status": exp["status"],
-            "mapped_to": exp["mapped_to"],    # unseen ise nearest known
+            "mapped_to": exp["mapped_to"],
+            "nearest_distance": exp["levenshtein_distance"],
             "transitions": [
                 {"transition": exp["transition_prev_cur"],
                  "probability": round(exp["prob_prev_cur"], 6)},

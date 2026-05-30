@@ -31,7 +31,7 @@ def get_best_parameter_result(csv_path, dataset_name):
 def _load_original_scenario():
     """
     run_skab_automata / run_batadal_automata tarafından kaydedilen
-    base run sonuçlarını yükler.
+    base run sonuçlarını yükler. Her iki log formatını destekler.
     """
     records = []
     for dataset, fname in [("SKAB", "automata_skab_results.csv"),
@@ -40,19 +40,26 @@ def _load_original_scenario():
         if not path.exists():
             continue
         df = pd.read_csv(path, on_bad_lines="skip")
+        if df.empty:
+            continue
         last = df.iloc[-1]
+        # Her iki log formatı için fallback: test_ prefix'li veya düz sütunlar
+        accuracy = last.get("accuracy", last.get("test_accuracy", None))
+        precision = last.get("precision", last.get("test_precision", None))
+        recall = last.get("recall", last.get("test_recall", None))
+        f1 = last.get("f1_score", last.get("test_f1_score", None))
         records.append({
             "dataset": dataset,
             "scenario": "original",
             "window_size": last.get("window_size", None),
             "alphabet_size": last.get("alphabet_size", None),
-            "accuracy_mean": last.get("accuracy", None),
+            "accuracy_mean": accuracy,
             "accuracy_std": 0.0,
-            "precision_mean": last.get("precision", None),
+            "precision_mean": precision,
             "precision_std": 0.0,
-            "recall_mean": last.get("recall", None),
+            "recall_mean": recall,
             "recall_std": 0.0,
-            "f1_score_mean": last.get("f1_score", None),
+            "f1_score_mean": f1,
             "f1_score_std": 0.0,
         })
     return records

@@ -82,13 +82,15 @@ def predict_with_automata(
         mapped_prev = prev_pattern
         mapped_current = current_pattern
         mapped_next = next_pattern
+        nearest_distance = None
 
         if prev_pattern not in train_states:
             mapped_prev, _ = find_nearest_pattern(prev_pattern, train_states)
             status = "unseen"
 
         if current_pattern not in train_states:
-            mapped_current, _ = find_nearest_pattern(current_pattern, train_states)
+            mapped_current, dist = find_nearest_pattern(current_pattern, train_states)
+            nearest_distance = dist
             status = "unseen"
 
         if next_pattern not in train_states:
@@ -115,6 +117,7 @@ def predict_with_automata(
             "mapped_next": mapped_next,
             "status": status,
             "mapped_to": mapped_current if status == "unseen" else None,
+            "levenshtein_distance": nearest_distance,
             "transition_prev_cur": f"{mapped_prev} -> {mapped_current}",
             "prob_prev_cur": prob_prev_cur,
             "transition_cur_next": f"{mapped_current} -> {mapped_next}",
@@ -265,14 +268,21 @@ def main():
     log_experiment_result(
         LOGS_DIR / "automata_batadal_results.csv",
         {
+            "dataset": "BATADAL",
+            "model": "Automata",
+            "window_size": DEFAULT_WINDOW_SIZE,
+            "alphabet_size": DEFAULT_ALPHABET_SIZE,
+            "threshold": AUTOMATA_PROBABILITY_THRESHOLD,
+            "state_count": len(train_states),
+            "transition_density": transition_density,
             "val_accuracy": val_metrics["accuracy"],
             "val_precision": val_metrics["precision"],
             "val_recall": val_metrics["recall"],
             "val_f1_score": val_metrics["f1_score"],
-            "test_accuracy": metrics["accuracy"],
-            "test_precision": metrics["precision"],
-            "test_recall": metrics["recall"],
-            "test_f1_score": metrics["f1_score"],
+            "accuracy": metrics["accuracy"],
+            "precision": metrics["precision"],
+            "recall": metrics["recall"],
+            "f1_score": metrics["f1_score"],
             "roc_auc": roc_auc,
             "average_precision": ap,
         }
@@ -297,6 +307,7 @@ def main():
             "pattern": exp["pattern"],
             "status": exp["status"],
             "mapped_to": exp["mapped_to"],
+            "nearest_distance": exp["levenshtein_distance"],
             "transitions": [
                 {"transition": exp["transition_prev_cur"],
                  "probability": round(exp["prob_prev_cur"], 6)},
