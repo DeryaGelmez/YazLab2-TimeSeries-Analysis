@@ -10,6 +10,7 @@ from config.config import (
     LOGS_DIR
 )
 
+
 from src.automata.run_skab_automata import (
     prepare_automata_sequence,
     predict_with_automata
@@ -101,14 +102,14 @@ def main():
 
     train_patterns = prepare_automata_sequence(
         train_pc1,
-        window_size=6,
-        alphabet_size=6
+        window_size=WINDOW_SIZE,
+        alphabet_size=ALPHABET_SIZE
     )
 
     test_patterns = prepare_automata_sequence(
         test_pc1,
-        window_size=6,
-        alphabet_size=6
+        window_size=WINDOW_SIZE,
+        alphabet_size=ALPHABET_SIZE
     )
 
     train_states = get_unique_states(train_patterns)
@@ -121,7 +122,7 @@ def main():
     controlled_test_patterns = create_controlled_unseen_test_patterns(
         test_patterns=test_patterns,
         train_states=train_states,
-        alphabet_size=6,
+        alphabet_size=ALPHABET_SIZE,
         unseen_ratio=0.10,
         seed=42
     )
@@ -177,8 +178,8 @@ def main():
     result_df = pd.DataFrame([{
         "dataset": "SKAB",
         "scenario": "controlled_unseen",
-        "window_size": 6,
-        "alphabet_size": 6,
+        "window_size": WINDOW_SIZE,
+        "alphabet_size": ALPHABET_SIZE,
         "unseen_ratio_target": 0.10,
         "unseen_count": len(unseen_records),
         "accuracy": metrics["accuracy"],

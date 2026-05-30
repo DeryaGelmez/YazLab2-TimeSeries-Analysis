@@ -4,6 +4,8 @@ import pandas as pd
 from config.config import (
     BATADAL_TRAIN_PC1,
     BATADAL_TEST_PC1,
+    WINDOW_SIZE,
+    ALPHABET_SIZE,
     AUTOMATA_PROBABILITY_THRESHOLD,
     LOGS_DIR
 )
@@ -21,10 +23,6 @@ from src.automata.transition import (
 
 from src.automata.levenshtein import find_nearest_pattern
 from src.utils.metrics import calculate_classification_metrics
-
-
-WINDOW_SIZE = 6
-ALPHABET_SIZE = 6
 
 
 def create_unseen_pattern(pattern, alphabet_size):
