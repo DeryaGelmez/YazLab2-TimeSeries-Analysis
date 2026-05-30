@@ -7,6 +7,7 @@ from config.config import (
     DEFAULT_WINDOW_SIZE,
     DEFAULT_ALPHABET_SIZE,
     AUTOMATA_PROBABILITY_THRESHOLD,
+    UNSEEN_RATIO,
     RANDOM_SEEDS,
     LOGS_DIR
 )
@@ -39,7 +40,7 @@ def create_controlled_unseen_test_patterns(
     test_patterns,
     train_states,
     alphabet_size,
-    unseen_ratio=0.10,
+    unseen_ratio=UNSEEN_RATIO,
     seed=42
 ):
     random.seed(seed)
@@ -94,7 +95,7 @@ def main():
             test_patterns=test_patterns,
             train_states=train_states,
             alphabet_size=DEFAULT_ALPHABET_SIZE,
-            unseen_ratio=0.10,
+            unseen_ratio=UNSEEN_RATIO,
             seed=seed
         )
 

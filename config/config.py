@@ -58,6 +58,12 @@ GAUSSIAN_NOISE_STD = 0.05
 # Classification threshold for automata anomaly decision
 AUTOMATA_PROBABILITY_THRESHOLD = 0.10
 
+# State diagram gorsel esigi: bu olasiligin altindaki gecisler cizilmez
+STATE_DIAGRAM_THRESHOLD = 0.3
+
+# Controlled unseen senaryo: test pattern'larinin yuzde kaci modifiye edilir
+UNSEEN_RATIO = 0.10
+
 # Deep learning outputs
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 OUTPUTS_FIGURES_DIR = OUTPUTS_DIR / "figures"

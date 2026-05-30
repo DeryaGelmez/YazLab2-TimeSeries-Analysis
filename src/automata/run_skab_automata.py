@@ -7,6 +7,7 @@ from config.config import (
     DEFAULT_WINDOW_SIZE,
     DEFAULT_ALPHABET_SIZE,
     AUTOMATA_PROBABILITY_THRESHOLD,
+    STATE_DIAGRAM_THRESHOLD,
     LOGS_DIR,
     FIGURES_DIR
 )
@@ -183,7 +184,7 @@ def main():
     plot_state_diagram(
         transition_probabilities=transition_probabilities,
         save_path=FIGURES_DIR / "skab_automata_state_diagram.png",
-        threshold=0.3,
+        threshold=STATE_DIAGRAM_THRESHOLD,
         title="SKAB Automata State Diagram"
     )
 
