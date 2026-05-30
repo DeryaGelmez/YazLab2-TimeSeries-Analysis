@@ -869,6 +869,123 @@ Senaryo karşılaştırma sonuçları ve yorumları için **Senaryo Karşılaşt
 
 ---
 
+# Rapor Tabloları
+
+Bu bölüm, proje rapor şablonundaki beş tabloyu SKAB ve BATADAL veri setleri üzerindeki gerçek deney
+sonuçlarıyla sunmaktadır. DL model değerleri takım arkadaşı tarafından, Automata değerleri bu bölümde
+doldurulmuştur.
+
+---
+
+## Tablo 1 — Model Performansı ve Stabilitesi (F1-score ± Standart Sapma)
+
+> Değerlendirme: SKAB → 5-fold GroupKFold (source_file bazlı) | BATADAL → zaman sıralı %60/%20/%20
+> Sabit parametreler: window=4, alphabet=3 | Seed'ler: 42, 123, 2026, 7, 999
+
+| Model | SKAB | BATADAL |
+| :--- | :---: | :---: |
+| LSTM | 0.463 ± 0.216 | 0.156 ± 0.349 |
+| GRU | 0.618 ± 0.095 | 0.025 ± 0.038 |
+| 1D-CNN | 0.577 ± 0.091 | 0.012 ± 0.028 |
+| **Automata** | **0.250 ± 0.072** | **0.043 ± 0.000** |
+
+> **Automata notu:** SKAB değeri 5-fold GroupKFold ortalamasıdır. BATADAL değeri deterministik tek çalıştırma sonucudur (otomata rastgele işlem içermez).
+
+---
+
+## Tablo 2 — Gürültü Etkisi ve Unseen Senaryo Analizi
+
+> Gürültü: Gaussian noise std=0.05 (5 seed) | Unseen: %10 pattern modifikasyonu (5 seed)
+> Det. Rate = Recall (unseen senaryosunda anomali yakalama oranı) | Map. Acc. = F1 (eşleme sonrası doğruluk)
+
+| Model | Orijinal F1 | Gürültülü F1 | Det. Rate | Map. Acc. |
+| :--- | :---: | :---: | :---: | :---: |
+| | **SKAB / BATADAL** | **SKAB / BATADAL** | **SKAB / BATADAL** | **SKAB / BATADAL** |
+| LSTM | 0.463 / 0.156 | 0.453 / 0.163 | 0.416 / 0.252 | 0.270 / 0.189 |
+| GRU | 0.618 / 0.025 | 0.606 / 0.056 | 0.519 / 0.216 | 0.321 / 0.170 |
+| 1D-CNN | 0.577 / 0.012 | 0.548 / 0.013 | 0.432 / 0.019 | 0.288 / 0.032 |
+| **Automata** | **0.171 / 0.043** | **0.180 / 0.045** | **0.314 / 0.286** | **0.289 / 0.035** |
+
+> **Automata gürültü yorumu:** SAX sembolik temsili, düşük seviyeli gürültüyü (std=0.05) absorbe etmektedir;
+> SKAB F1 değişimi yalnızca +0.009 (±0.005 std). Otomata gürültüye karşı en dayanıklı modeldir.
+>
+> **Automata unseen yorumu:** w=4, a=3 konfigürasyonunda alfabe küçük (3 harf) olduğundan modifiye edilen
+> pattern'ların çoğu eğitim sözlüğünde kalır (unseen count≈0). Levenshtein mekanizması devreye
+> girdiğinde sistem çalışmaya devam etmektedir.
+
+---
+
+## Tablo 3 — Cross-Dataset Genellenebilirlik (Automata, F1-score)
+
+> Bir veri setinde eğitilmiş otomata modelinin diğer veri setine uygulanması.
+> Farklı veri setlerinin farklı SAX sözlükleri oluşturduğu için Levenshtein eşleme devreye girer.
+
+| Train / Test | SKAB | BATADAL |
+| :--- | :---: | :---: |
+| **Train: SKAB** | 0.250 ± 0.072 *(GKF)* | 0.080 |
+| **Train: BATADAL** | 0.361 | 0.043 *(in-domain)* |
+
+**Unseen pattern oranları (cross-dataset):**
+
+| Yön | Unseen Oranı | Açıklama |
+| :--- | :---: | :--- |
+| SKAB→BATADAL | %0.0 | BATADAL PC1 örüntüleri SKAB sözlüğünde mevcut |
+| BATADAL→SKAB | %30.0 | SKAB örüntülerinin %30'u Levenshtein ile eşlendi |
+
+**Yorumlar:**
+- **SKAB→BATADAL (F1=0.080):** Yüksek recall (0.857) ancak düşük precision (0.042). SKAB geçiş olasılıkları BATADAL normal operasyonunu "alışılmadık" bulmakta ve fazla anomali işaretlemektedir.
+- **BATADAL→SKAB (F1=0.361):** SKAB örüntülerinin %30'u Levenshtein ile eşlendi; recall=0.648. BATADAL'da görece homojen veri yapısı, SKAB'a kısmen genellenebilmektedir.
+- **Genel:** Otomata modeli cross-dataset uygulamada Levenshtein mekanizması sayesinde çalışmaya devam etmektedir; ancak farklı fiziksel sistemlerin farklı istatistiksel özellikler taşıması nedeniyle performans düşmektedir.
+
+---
+
+## Tablo 4 — Automata Parametre Duyarlılık Analizi (F1-score, GroupKFold)
+
+> SKAB veri seti, 5-fold GroupKFold. Her hücre: o parametre kombinasyonu için GroupKFold F1 ortalaması.
+
+### 4a. Tam 4×4 Parametre Tablosu
+
+| Window \ Alphabet | a=3 | a=4 | a=5 | a=6 |
+| :---: | :---: | :---: | :---: | :---: |
+| **w=3** | 0.240 | 0.326 | 0.376 | 0.410 |
+| **w=4** | 0.250 | 0.368 | 0.434 | 0.476 |
+| **w=5** | 0.274 | 0.390 | **0.438** | **0.494** |
+| **w=6** | 0.235 | 0.329 | 0.384 | 0.392 |
+
+### 4b. Parametre Boyutu Başına Özet (diğer parametrenin ortalaması)
+
+| Parametre | Değer=3 | Değer=4 | Değer=5 | Değer=6 |
+| :--- | :---: | :---: | :---: | :---: |
+| **Window Size** | 0.338 | 0.382 | **0.399** | 0.335 |
+| **Alphabet Size** | 0.250 | 0.353 | 0.408 | **0.443** |
+
+**Gözlemler:**
+- **En iyi kombinasyon:** window=5, alphabet=6 → F1=0.494 ± 0.069
+- Alphabet size artışı F1'i monoton artırır (a=3→6: +0.193)
+- Window size için optimum w=5; w=6'da aşırı parçalanma nedeniyle düşüş
+- State sayısı: w=3,a=3→27 | w=5,a=6→1420 | w=6,a=6→1998
+- Geçiş yoğunluğu: büyük alphabet ile keskin düşüş (0.111→0.0006)
+
+---
+
+## Tablo 5 — Model Çalışma Süresi (Runtime) Karşılaştırması
+
+> SKAB veri seti (train: 17954 sample, test: 4518 sample), CPU ortamı
+
+| Model | Training Time | Inference Time | Notlar |
+| :--- | :---: | :---: | :--- |
+| LSTM | — | — | *DL bölümüne bakınız* |
+| GRU | — | — | *DL bölümüne bakınız* |
+| 1D-CNN | — | — | *DL bölümüne bakınız* |
+| **Automata** | **~19 ms** | **~1.6 ms** | 4518 test sample, CPU |
+
+> **Automata runtime yorumu:** Otomata modeli eğitimi yalnızca geçiş sayımından ibaret olduğundan
+> son derece hızlıdır (~19 ms). DL modelleri tipik olarak dakikalar-saatler mertebesinde eğitim
+> gerektirirken otomata tek geçişte tüm geçiş olasılıklarını öğrenir. Bu, kaynak kısıtlı ortamlarda
+> otomata modelinin önemli bir avantajını oluşturmaktadır.
+
+---
+
 # Geliştiriciler
 
 - Derya Gelmez
