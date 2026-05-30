@@ -677,13 +677,112 @@ Proje tanımında öngörülen Tablo 2 formatına uygun özet (`outputs/metrics/
 
 ---
 
-## DL vs Otomata Karşılaştırması (Yer Tutucu)
+## DL vs Otomata Karşılaştırması
 
-> Otomata pipeline sonuçları (SKAB / BATADAL, parametre analizi, unseen yönetimi) elde edildiğinde bu bölüm tamamlanacaktır. Planlanan karşılaştırma eksenleri:
->
-> - SKAB: Grid 2 / GRU (F1≈0.62) ile otomata en iyi konfigürasyonunun performans karşılaştırması
-> - BATADAL: DL performans analizi ile otomata sonuçlarının yorumlanabilirlik ve stabilite açısından değerlendirilmesi
-> - Gürültü ve unseen senaryolarında iki paradigmanın davranış farklarının incelenmesi
+Bu bölüm, derin öğrenme ve olasılıksal otomata modellerini dört eksen üzerinde karşılaştırır: performans, genellenebilirlik, gürültüye dayanıklılık ve açıklanabilirlik.
+
+### SKAB — Model Karşılaştırması (Sabit Parametreler: window=4, alphabet=3)
+
+| Model | F1 | Recall | Precision | Notlar |
+| :--- | :---: | :---: | :---: | :--- |
+| **DL — GRU (Grid 2)** | **0.618 ± 0.095** | — | — | 5 seed, GroupKFold, referans model |
+| DL — LSTM (Grid 2) | 0.474 ± 0.095 | — | — | 5 seed |
+| DL — 1D-CNN (Grid 2) | 0.576 ± 0.110 | — | — | 5 seed |
+| **Automata (sabit params)** | 0.250 ± 0.072 | 0.195 ± 0.055 | 0.362 ± 0.144 | GroupKFold, 5 fold |
+| **Automata (en iyi: w=5, a=6)** | **0.494 ± 0.069** | — | — | GroupKFold, 5 fold |
+
+**SKAB Yorumu:** DL modelleri (özellikle GRU) belirgin şekilde daha yüksek F1 üretmektedir. Ancak otomata modeli, sabit parametrelerle makul bir performans sağlarken parametre optimizasyonuyla (%49.4 F1) DL’nin alt sınırına yaklaşmaktadır. Otomata modelinin temel avantajı her kararın matematiksel olarak gerekçelendirilebilmesidir.
+
+### BATADAL — Model Karşılaştırması
+
+| Model | F1 | Recall | Precision | Notlar |
+| :--- | :---: | :---: | :---: | :--- |
+| DL — En iyi (LSTM seed123) | 0.780 | 0.688 | — | Tek seed aykırı değeri |
+| DL — Ortalama (Grid 2) | 0.156 ± 0.349 | — | — | Çoğunluk sınıfı çöküşü |
+| **Automata (sabit params)** | **0.043** | 0.286 | 0.024 | Zaman sıralı değerlendirme |
+
+**BATADAL Yorumu:** BATADAL veri setinde (~%4 pozitif sınıf) her iki model ailesi de zorlanmaktadır. DL modelleri %56 oranında majority-class collapse sergilemektedir. Otomata modeli düşük F1 üretse de yüksek recall (0.286) ile anomali tespitinde belirli bir duyarlılık sağlamaktadır; kararlara her zaman olasılıksal gerekçe eklenebilmektedir.
+
+---
+
+### Senaryo Karşılaştırması — Otomata (window=4, alphabet=3, 5 seed)
+
+| Senaryo | SKAB F1 | BATADAL F1 | Yorum |
+| :--- | :---: | :---: | :--- |
+| Orijinal | 0.171 | 0.043 | Taban performans |
+| Gaussian Noise (std=0.05) | 0.180 ± 0.005 | 0.045 ± 0.001 | Gürültüye karşı stabil; F1 ~+0.5% |
+| Controlled Unseen (%10) | 0.289 ± 0.029 | 0.035 ± 0.012 | Küçük alfabe ile unseen oluşumu sınırlı |
+
+**Gürültü Etkisi:** Sabit parametre (w=4, a=3) ile elde edilen SAX sembolik temsili, düşük seviyeli Gaussian gürültüye (std=0.05) karşı oldukça dayanıklıdır. Sembolik kodlama, gürültüyü yumuşatma etkisi göstermektedir.
+
+**Unseen Davranışı:** w=4, a=3 konfigürasyonunda alfabe boyutu 3 harfle (a, b, c) sınırlı olduğundan, üretilen "unseen" pattern’ların büyük çoğunluğu yine de eğitim sözlüğünde yer almaktadır (unseen sayısı ≈ 0). Bu, küçük alfabe boyutlarında sözlüğün eğitim verisiyle doygunluğa ulaştığını ve Levenshtein mekanizmasının ağırlıklı olarak SAX haritalama hatasından kaçınmak için devreye girdiğini göstermektedir. Daha büyük alfabelerle (w=6, a=6) gerçek unseen oranı %10’un üzerine çıkmaktadır.
+
+### Senaryo Karşılaştırması — DL (Grid 2, 5 seed)
+
+| Senaryo | SKAB F1 | BATADAL F1 |
+| :--- | :---: | :---: |
+| Orijinal | 0.618 ± 0.095 (GRU) | 0.156 ± 0.349 |
+| Gaussian Noise | 0.606 ± 0.095 (GRU) | ~0.152 |
+| Unseen (drift) | 0.321 ± 0.191 (GRU) | ~0.170 |
+
+---
+
+### Parametre Analizi — Otomata SKAB (GroupKFold, mean ± std)
+
+| window | alphabet | F1 | Recall | State Sayısı |
+| :---: | :---: | :---: | :---: | :---: |
+| 3 | 3 | 0.240 ± 0.026 | — | ~27 |
+| 4 | 3 | 0.250 ± 0.072 | 0.195 | ~81 |
+| 4 | 6 | 0.476 ± 0.091 | — | ~682 |
+| 5 | 6 | **0.494 ± 0.069** | — | ~1420 |
+| 6 | 6 | 0.392 ± 0.054 | — | ~1998 |
+
+**Parametre Gözlemleri:**
+- Alphabet boyutu arttıkça state sayısı ve F1 birlikte yükselir — ancak belirli bir noktadan sonra (w=6, a=6) F1 düşmeye başlar. Fazla granülerlik aşırı parçalanmaya neden olmaktadır.
+- Optimal nokta: window=5, alphabet=6 (F1=0.494, GroupKFold)
+- Geçiş yoğunluğu (transition density) büyük alphabelerle keskin düşer (0.11 → 0.0006), seyrek Markov zinciri yapısına işaret eder.
+
+---
+
+### Açıklanabilirlik Analizi
+
+Otomata modelinin temel avantajı, her karar için tam açıklama üretmesidir:
+
+```json
+{
+  "time_step": 142,
+  "state": "bbbb",
+  "pattern": "bbbc",
+  "status": "seen",
+  "mapped_to": null,
+  "transitions": [
+    {"transition": "bbbb -> bbbc", "probability": 0.0312},
+    {"transition": "bbbc -> bbcc", "probability": 0.0891}
+  ],
+  "probability": 0.002780,
+  "confidence_score": 0.002780,
+  "decision": "anomaly"
+}
+```
+
+- **Düşük olasılık → Anomali:** P(sequence) < 0.10 → sistem anomali işaretler
+- **Yüksek olasılık → Normal:** P(sequence) ≥ 0.10 → beklenen davranış
+- **Unseen mekanizması:** Görülmemiş pattern’lar Levenshtein ile en yakın bilinen state’e eşlenir; eşleme mesafesi raporlanır
+
+DL modelleri bu türde bir karar gerekçesi üretemez. Kararlar yalnızca ağırlık matrislerinin çıktılarına dayanır ve anlaşılması güçtür.
+
+### Genel Değerlendirme
+
+| Kriter | DL (GRU, SKAB) | Automata (en iyi) |
+| :--- | :---: | :---: |
+| Performans (F1) | **0.618** | 0.494 |
+| Genellenebilirlik | Orta (BATADAL’da collapse) | Orta (BATADAL zayıf) |
+| Gürültüye dayanıklılık | Yüksek (~-2%) | **Çok yüksek (~+1%)** |
+| Açıklanabilirlik | Düşük (black-box) | **Tam (her karar gerekçeli)** |
+| Eğitim süresi | Yüksek (270 run/grid) | **Düşük (deterministik)** |
+| Parametre hassasiyeti | Yüksek (seed, lr, arch) | Orta (window, alphabet) |
+
+**Sonuç:** Yüksek doğruluk öncelikli senaryolarda DL tercih edilebilir. Yorumlanabilirlik, denetlenebilirlik veya kaynak kısıtı (CPU) gerektiren durumlarda olasılıksal otomata, makul performansıyla anlamlı bir alternatif sunmaktadır.
 
 ---
 
@@ -692,60 +791,18 @@ Proje tanımında öngörülen Tablo 2 formatına uygun özet (`outputs/metrics/
 Deneyler aşağıdaki senaryolar altında gerçekleştirilmiştir:
 
 - Orijinal veri
-- Gaussian Noise eklenmiş veri
-- Controlled Unseen Pattern verisi
+- Gaussian Noise eklenmiş veri (std=0.05)
+- Controlled Unseen Pattern verisi (%10 modifikasyon oranı)
 
 ## Gaussian Noise Deneyi
 
-Modelin gürültülü veriler altındaki dayanıklılığı ölçülmüştür.
-
-Bu deneyde test verisine düşük seviyeli Gaussian Noise eklenmiş ve model performansı tekrar değerlendirilmiştir.
-
-Sonuçlar modelin düşük seviyeli gürültü altında görece stabil kaldığını göstermiştir.
+Test verisine düşük seviyeli Gaussian gürültü eklenerek model dayanıklılığı ölçülmüştür. Sabit parametrelerle (w=4, a=3) SAX sembolik temsili gürültüyü absorbe ettiğinden otomata performansı neredeyse değişmemiştir (SKAB: F1=0.179±0.005). DL modelleri de gürültüye karşı dayanıklı kalmıştır (SKAB GRU: ~-2% F1).
 
 ## Controlled Unseen Experiment
 
-Modelin eğitim sırasında görülmeyen pattern’lar karşısındaki davranışı analiz edilmiştir.
+Levenshtein Distance (edit distance) algoritması ile unseen pattern yönetimi uygulanmıştır. Test sırasında eğitim sözlüğünde bulunmayan pattern’lar tespit edilerek en yakın bilinen pattern’a eşlenir ve sistem bu state üzerinden çalışmaya devam eder.
 
-Bu deneyde kontrollü şekilde unseen pattern’lar oluşturulmuş ve Levenshtein Distance algoritması ile en yakın pattern eşleştirmesi gerçekleştirilmiştir.
-
-Örnek mapping:
-
-```text
-ccdcbb → ccdcbe
-distance = 1
-```
-
-Bu yapı sayesinde model unseen pattern’lar altında çalışmaya devam edebilmiştir.
-
----
-
-# Mevcut Durum
-
-Tamamlanan çalışmalar:
-
-- SKAB preprocessing
-- BATADAL preprocessing
-- Probabilistic Automata pipeline
-- Explainability sistemi
-- Transition analysis
-- Heatmap üretimi
-- State diagram üretimi
-- Parameter sensitivity analysis
-- Gaussian noise experiments
-- Controlled unseen experiments
-- Summary metric tabloları
-- Deep Learning pipeline (LSTM, GRU, 1D-CNN)
-- DL senaryo deneyleri (original / noise / unseen)
-- DL otomatik tablo ve görsel üretimi
-- DL Grid 1 (baseline BCE) — 270 run tamamlandı
-- DL Grid 2 (weighted BCE) — 270 run tamamlandı
-- DL deney sonuçları ve analiz taslağı (README içinde)
-
-Devam eden çalışmalar:
-
-- Final model comparison (DL vs Automata)
-- Final rapor yazımı
+**Önemli Gözlem:** Sabit parametrelerle (w=4, a=3) üretilen modifikasyonların çoğu yine de eğitim sözlüğünde yer bulmakta, gerçek unseen sayısı sıfıra yakın kalmaktadır. Bu durum, küçük alfabe boyutlarında SAX sözlüğünün doygunluğa ulaştığını göstermektedir.
 
 ---
 

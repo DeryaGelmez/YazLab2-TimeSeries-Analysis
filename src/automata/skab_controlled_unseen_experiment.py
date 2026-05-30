@@ -4,8 +4,8 @@ import pandas as pd
 from config.config import (
     SKAB_TRAIN_PC1,
     SKAB_TEST_PC1,
-    WINDOW_SIZE,
-    ALPHABET_SIZE,
+    DEFAULT_WINDOW_SIZE,
+    DEFAULT_ALPHABET_SIZE,
     AUTOMATA_PROBABILITY_THRESHOLD,
     RANDOM_SEEDS,
     LOGS_DIR
@@ -62,8 +62,8 @@ def create_controlled_unseen_test_patterns(
 
 def main():
     print("SKAB Kontrollü Unseen Deneyi Başladı (5 seed)")
-    print(f"Kullanılan WINDOW_SIZE: {WINDOW_SIZE}")
-    print(f"Kullanılan ALPHABET_SIZE: {ALPHABET_SIZE}")
+    print(f"Kullanılan DEFAULT_WINDOW_SIZE: {DEFAULT_WINDOW_SIZE}")
+    print(f"Kullanılan DEFAULT_ALPHABET_SIZE: {DEFAULT_ALPHABET_SIZE}")
 
     train_df = pd.read_csv(SKAB_TRAIN_PC1)
     test_df = pd.read_csv(SKAB_TEST_PC1)
@@ -74,13 +74,13 @@ def main():
 
     train_patterns = prepare_automata_sequence(
         train_pc1,
-        window_size=WINDOW_SIZE,
-        alphabet_size=ALPHABET_SIZE
+        window_size=DEFAULT_WINDOW_SIZE,
+        alphabet_size=DEFAULT_ALPHABET_SIZE
     )
     test_patterns = prepare_automata_sequence(
         test_pc1,
-        window_size=WINDOW_SIZE,
-        alphabet_size=ALPHABET_SIZE
+        window_size=DEFAULT_WINDOW_SIZE,
+        alphabet_size=DEFAULT_ALPHABET_SIZE
     )
     train_states = get_unique_states(train_patterns)
     transition_counts = count_transitions(train_patterns)
@@ -93,7 +93,7 @@ def main():
         controlled_test_patterns = create_controlled_unseen_test_patterns(
             test_patterns=test_patterns,
             train_states=train_states,
-            alphabet_size=ALPHABET_SIZE,
+            alphabet_size=DEFAULT_ALPHABET_SIZE,
             unseen_ratio=0.10,
             seed=seed
         )
@@ -127,8 +127,8 @@ def main():
             "seed": seed,
             "dataset": "SKAB",
             "scenario": "controlled_unseen",
-            "window_size": WINDOW_SIZE,
-            "alphabet_size": ALPHABET_SIZE,
+            "window_size": DEFAULT_WINDOW_SIZE,
+            "alphabet_size": DEFAULT_ALPHABET_SIZE,
             "unseen_ratio_target": 0.10,
             "unseen_count": len(unseen_records),
             "accuracy": metrics["accuracy"],
@@ -148,8 +148,8 @@ def main():
     summary = {
         "dataset": "SKAB",
         "scenario": "controlled_unseen",
-        "window_size": WINDOW_SIZE,
-        "alphabet_size": ALPHABET_SIZE,
+        "window_size": DEFAULT_WINDOW_SIZE,
+        "alphabet_size": DEFAULT_ALPHABET_SIZE,
         "unseen_ratio_target": 0.10,
         "accuracy_mean": results_df["accuracy"].mean(),
         "accuracy_std": results_df["accuracy"].std(),
