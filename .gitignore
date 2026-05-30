@@ -8,15 +8,6 @@ Dataset/
 *.csv
 *.xlsx
 
-# Outputs
-outputs/
-*.png
-*.jpg
-*.jpeg
-*.pkl
-*.h5
-*.pt
-*.pth
 
 # System files
 .DS_Store
